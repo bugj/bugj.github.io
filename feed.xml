@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Emonsec</title>
+    <description></description>
+    <link>https://bugj.github.io/</link>
+    <atom:link href="https://bugj.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Mon, 22 Feb 2021 15:54:59 +0800</pubDate>
+    <lastBuildDate>Mon, 22 Feb 2021 15:54:59 +0800</lastBuildDate>
+    <generator>Jekyll v4.2.0</generator>
+    
+      <item>
+        <title>aaaaaaaaaaaaaaaaaaaaa</title>
+        <description>攻击者使用 Netlogon 远程协议 (MS-NRPC) 建立与域控制器连接的 Netlogon 安全通道时，存在特权提升漏洞。当成功利用此漏洞时，攻击者可无需通过身份验证，在网络中的设备上运行经特殊设计的应用程序，获取域控制器的管理员权限，影响版本：
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Windows Server 2008 R2 for x64-based Systems Service Pack 1
+Windows Server 2008 R2 for x64-based Systems Service Pack 1 (Server Core installation)
+Windows Server 2012
+Windows Server 2012 (Server Core installation)
+Windows Server 2012 R2
+Windows Server 2012 R2 (Server Core installation)
+Windows Server 2016
+Windows Server 2016 (Server Core installation)
+Windows Server 2019
+Windows Server 2019 (Server Core installation)
+Windows Server, version 1903 (Server Core installation)
+Windows Server, version 1909 (Server Core installation)
+Windows Server, version 2004 (Server Core installation)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+</description>
+        <pubDate>Sun, 21 Feb 2021 00:00:00 +0800</pubDate>
+        <link>https://bugj.github.io/2021/02/21/CVE-2020-1472-NetLogon%E5%A4%8D%E7%8E%B0/</link>
+        <guid isPermaLink="true">https://bugj.github.io/2021/02/21/CVE-2020-1472-NetLogon%E5%A4%8D%E7%8E%B0/</guid>
+        
+        <category>React</category>
+        
+        <category>hooks</category>
+        
+        
+        <category>JavaScript</category>
+        
+      </item>
+    
+      <item>
+        <title>React Hooks 系列之8 custom Hook</title>
+        <description>
+掌握 React Hooks api 将更好的帮助你在工作中使用，对 React 的掌握更上一层楼。本系列将使用大量实例代码和效果展示，非常易于初学者和复习使用。
+
+截至目前，学习了官方的这么多 hooks api，我们也可以创造一些自己的 hooks，甚至官方也在鼓励开发者将组件逻辑抽象到自定义 hooks 中，方便复用。
+
+自定义 Hook 是一个函数，其名称以 “use” 开头，函数内部可以调用其他的 Hook。
+
+通过自定义 Hook，可以将组件逻辑提取到可重用的函数中。
+</description>
+        <pubDate>Wed, 27 May 2020 00:00:00 +0800</pubDate>
+        <link>https://bugj.github.io/2020/05/27/react-hooks8-customHooks/</link>
+        <guid isPermaLink="true">https://bugj.github.io/2020/05/27/react-hooks8-customHooks/</guid>
+        
+        <category>React</category>
+        
+        <category>hooks</category>
+        
+        
+        <category>JavaScript</category>
+        
+      </item>
+    
+  </channel>
+</rss>
