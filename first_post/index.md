@@ -1,0 +1,882 @@
+# 过命令执行方式
+
+
+## Java
+
+1.  servlet-api：通过命令执行方式注册listener、filter、servlet，从而执行命令执行功能。特定框架、容器的内存马原理于此类似，如spring的controller，tomcat的valve
+2.  字节码增强型：通过Java的instrumentation动态修改已有代码，实现命令执行
+
+检测：可以用findshell，通过sa-jdi.jar看JVM运行的类的字节码来分析，输入jvm进程找已经加载并被java Instrumentation修改后的类，然后搜可能被植入内存马的类。如果是修改后的类的字节码（冰蝎）可读性就很差
+可以用dumpclass工具来dump类至指定的文件夹
+修复：javaassist获取磁盘上未经内存马修改的类的字节码。通过retransformClass方法重新定义类即可。首先需要编写一个javaagent，然后注入到目标中间件即可。
+
+```python
+import datetime
+import uuid
+from typing import Literal, List, Optional
+
+from fastapi import APIRouter, Depends, Request
+from pydantic import BaseModel, constr
+
+from config.config import Config
+from device_auth import utils
+from device_auth.db import session, user_keys, model
+from device_auth.api.base import AgentApiReqUser
+from device_auth.db.model import KeyUseForEnum
+from device_auth.logger import logger
+from device_auth.schema import schema
+from device_auth.api.message import Message, BadRequestMessage
+from device_auth.schema.user_schema import UserDeviceSchema
+from device_auth.third_api import ca_api, relay_api, openapi
+from device_auth.service.register import PKCredential
+from device_auth.utils import pub_key_crypt
+
+router = APIRouter()
+
+
+class SignItem(BaseModel):
+    data: constr(strip_whitespace=True)
+    req_type: Literal[KeyUseForEnum.SSH.name.lower(), KeyUseForEnum.HTTP.name.lower()]
+
+
+class DeviceSignSchema(UserDeviceSchema):
+    sign_data: List[SignItem]
+
+
+@router.post("/api/user/device/sign")
+async def device_register(item: DeviceSignSchema,
+                          db=Depends(session.get_db),
+                          user_info=Depends(AgentApiReqUser)):
+    """
+    ssh公钥注册 + 签发证书
+    """
+    # 强制让http的证书放第一个，方便后面取有效期
+    uuid_str = uuid.uuid4().hex
+
+    logger.info("start sign", extra={
+        "event": "sign",
+        "user": user_info.user,
+        "trace_id": uuid_str,
+        "data": item.model_dump(),
+    })
+    item.sign_data = sorted(item.sign_data, key=lambda k: -KeyUseForEnum[k.req_type.upper()].value)
+
+    # check params
+    check_params = []
+    for idx, sign_item in enumerate(item.sign_data, start=1):
+        pk_cred = PKCredential.new(sign_item.data, sign_item.req_type, user_info.user, "")
+        try:
+            ok, key_data = pk_cred.check_pub_key_avail()
+            if not ok:
+                check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 400, 'msg': key_data})
+        except Exception as e:
+            check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 400, 'msg': str(e)})
+        else:
+            check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'msg': "ok"})
+
+    if any([i['code'] != 200 for i in check_params]):
+        return BadRequestMessage(message='parameter validation error', data=check_params)
+
+    item.username = user_info.user
+    device_dao = user_keys.UserDeviceDao(db)
+    is_byod = False
+    try:
+        is_byod = openapi.OpenApi().is_byod(item.username, item.device_sn)
+    except:
+        logger.error("get user device byod error")
+    logger.info(f"get user[{item.username}] device[{item.device_sn}] byod[{is_byod}]")
+    item.is_byod = is_byod
+    device_item = device_dao.add(item)
+
+    user_keys_dao = user_keys.UserKeysDao(db)
+    user_cert_dao = user_keys.UserCertDao(db)
+
+    rest = []
+    expire_time = None
+
+    for idx, sign_item in enumerate(item.sign_data, start=1):
+        pk_cred = PKCredential.new(sign_item.data, sign_item.req_type, user_info.user, device_item.expire_time)
+        _, key_data = pk_cred.check_pub_key_avail()
+        device_info = schema.CreateUserPubkeyItem(
+            device_id=device_item.id,
+            fingerprint=key_data.fingerprint,
+            pub_key=key_data.pubkey,
+        )
+        user_key = user_keys_dao.device_register(device_info, KeyUseForEnum[sign_item.req_type.upper()].value)
+        if sign_item.req_type == KeyUseForEnum.HTTP.name.lower():
+            sign_data = pk_cred.sign()
+            expire_time = sign_data.expire_time
+            user_cert_dao.add(device_item.id, user_key.id, sign_data.sn, sign_data.cert, sign_data.expire_time)
+            rest.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'data': sign_data.cert})
+            logger.info("cert len %d" % len(sign_data.cert), extra={
+                "event": "sign",
+                "user": user_info.user,
+                "type": "http",
+                "trace_id": uuid_str,
+            })
+        else:
+            # TODO: 有效期先手动改成5年
+            pk_cred.expire_time = expire_time
+            sign_data = pk_cred.sign(bio=bool(item.support_biometrics))
+            rest.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'data': str(sign_data)})
+            logger.info("ssh key len %d" % len(str(sign_data)), extra={
+                "event": "sign",
+                "user": user_info.user,
+                "type": "ssh",
+                "trace_id": uuid_str,
+            })
+
+    # TODO: 有效期先手动改成5年
+    device_item.expire_time = expire_time
+
+    op_dao = user_keys.OpRecordDao(db)
+    op_dao.add(
+        user_info.user,
+        device_item.id,
+        model.OpTypeEnum.SIGN.value,
+        {"event": "sign", "device_sn": item.device_sn, "id": device_item.id},
+    )
+    logger.info("end", extra={
+        "event": "sign",
+        "user": user_info.user,
+        "trace_id": uuid_str,
+    })
+    return Message(message="OK", data=rest)
+
+
+class QueryDeviceListSchema(schema.QuerySchema):
+    device_sn: Optional[str] = None
+import datetime
+import uuid
+from typing import Literal, List, Optional
+
+from fastapi import APIRouter, Depends, Request
+from pydantic import BaseModel, constr
+
+from config.config import Config
+from device_auth import utils
+from device_auth.db import session, user_keys, model
+from device_auth.api.base import AgentApiReqUser
+from device_auth.db.model import KeyUseForEnum
+from device_auth.logger import logger
+from device_auth.schema import schema
+from device_auth.api.message import Message, BadRequestMessage
+from device_auth.schema.user_schema import UserDeviceSchema
+from device_auth.third_api import ca_api, relay_api, openapi
+from device_auth.service.register import PKCredential
+from device_auth.utils import pub_key_crypt
+
+router = APIRouter()
+
+
+class SignItem(BaseModel):
+    data: constr(strip_whitespace=True)
+    req_type: Literal[KeyUseForEnum.SSH.name.lower(), KeyUseForEnum.HTTP.name.lower()]
+
+
+class DeviceSignSchema(UserDeviceSchema):
+    sign_data: List[SignItem]
+
+
+@router.post("/api/user/device/sign")
+async def device_register(item: DeviceSignSchema,
+                          db=Depends(session.get_db),
+                          user_info=Depends(AgentApiReqUser)):
+    """
+    ssh公钥注册 + 签发证书
+    """
+    # 强制让http的证书放第一个，方便后面取有效期
+    uuid_str = uuid.uuid4().hex
+
+    logger.info("start sign", extra={
+        "event": "sign",
+        "user": user_info.user,
+        "trace_id": uuid_str,
+        "data": item.model_dump(),
+    })
+    item.sign_data = sorted(item.sign_data, key=lambda k: -KeyUseForEnum[k.req_type.upper()].value)
+
+    # check params
+    check_params = []
+    for idx, sign_item in enumerate(item.sign_data, start=1):
+        pk_cred = PKCredential.new(sign_item.data, sign_item.req_type, user_info.user, "")
+        try:
+            ok, key_data = pk_cred.check_pub_key_avail()
+            if not ok:
+                check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 400, 'msg': key_data})
+        except Exception as e:
+            check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 400, 'msg': str(e)})
+        else:
+            check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'msg': "ok"})
+
+    if any([i['code'] != 200 for i in check_params]):
+        return BadRequestMessage(message='parameter validation error', data=check_params)
+
+    item.username = user_info.user
+    device_dao = user_keys.UserDeviceDao(db)
+    is_byod = False
+    try:
+        is_byod = openapi.OpenApi().is_byod(item.username, item.device_sn)
+    except:
+        logger.error("get user device byod error")
+    logger.info(f"get user[{item.username}] device[{item.device_sn}] byod[{is_byod}]")
+    item.is_byod = is_byod
+    device_item = device_dao.add(item)
+
+    user_keys_dao = user_keys.UserKeysDao(db)
+    user_cert_dao = user_keys.UserCertDao(db)
+
+    rest = []
+    expire_time = None
+
+    for idx, sign_item in enumerate(item.sign_data, start=1):
+        pk_cred = PKCredential.new(sign_item.data, sign_item.req_type, user_info.user, device_item.expire_time)
+        _, key_data = pk_cred.check_pub_key_avail()
+        device_info = schema.CreateUserPubkeyItem(
+            device_id=device_item.id,
+            fingerprint=key_data.fingerprint,
+            pub_key=key_data.pubkey,
+        )
+        user_key = user_keys_dao.device_register(device_info, KeyUseForEnum[sign_item.req_type.upper()].value)
+        if sign_item.req_type == KeyUseForEnum.HTTP.name.lower():
+            sign_data = pk_cred.sign()
+            expire_time = sign_data.expire_time
+            user_cert_dao.add(device_item.id, user_key.id, sign_data.sn, sign_data.cert, sign_data.expire_time)
+            rest.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'data': sign_data.cert})
+            logger.info("cert len %d" % len(sign_data.cert), extra={
+                "event": "sign",
+                "user": user_info.user,
+                "type": "http",
+                "trace_id": uuid_str,
+            })
+        else:
+            # TODO: 有效期先手动改成5年
+            pk_cred.expire_time = expire_time
+            sign_data = pk_cred.sign(bio=bool(item.support_biometrics))
+            rest.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'data': str(sign_data)})
+            logger.info("ssh key len %d" % len(str(sign_data)), extra={
+                "event": "sign",
+                "user": user_info.user,
+                "type": "ssh",
+                "trace_id": uuid_str,
+            })
+
+    # TODO: 有效期先手动改成5年
+    device_item.expire_time = expire_time
+
+    op_dao = user_keys.OpRecordDao(db)
+    op_dao.add(
+        user_info.user,
+        device_item.id,
+        model.OpTypeEnum.SIGN.value,
+        {"event": "sign", "device_sn": item.device_sn, "id": device_item.id},
+    )
+    logger.info("end", extra={
+        "event": "sign",
+        "user": user_info.user,
+        "trace_id": uuid_str,
+    })
+    return Message(message="OK", data=rest)
+
+
+class QueryDeviceListSchema(schema.QuerySchema):
+    device_sn: Optional[str] = None
+
+import datetime
+import uuid
+from typing import Literal, List, Optional
+
+from fastapi import APIRouter, Depends, Request
+from pydantic import BaseModel, constr
+
+from config.config import Config
+from device_auth import utils
+from device_auth.db import session, user_keys, model
+from device_auth.api.base import AgentApiReqUser
+from device_auth.db.model import KeyUseForEnum
+from device_auth.logger import logger
+from device_auth.schema import schema
+from device_auth.api.message import Message, BadRequestMessage
+from device_auth.schema.user_schema import UserDeviceSchema
+from device_auth.third_api import ca_api, relay_api, openapi
+from device_auth.service.register import PKCredential
+from device_auth.utils import pub_key_crypt
+
+router = APIRouter()
+
+
+class SignItem(BaseModel):
+    data: constr(strip_whitespace=True)
+    req_type: Literal[KeyUseForEnum.SSH.name.lower(), KeyUseForEnum.HTTP.name.lower()]
+
+
+class DeviceSignSchema(UserDeviceSchema):
+    sign_data: List[SignItem]
+
+
+@router.post("/api/user/device/sign")
+async def device_register(item: DeviceSignSchema,
+                          db=Depends(session.get_db),
+                          user_info=Depends(AgentApiReqUser)):
+    """
+    ssh公钥注册 + 签发证书
+    """
+    # 强制让http的证书放第一个，方便后面取有效期
+    uuid_str = uuid.uuid4().hex
+
+    logger.info("start sign", extra={
+        "event": "sign",
+        "user": user_info.user,
+        "trace_id": uuid_str,
+        "data": item.model_dump(),
+    })
+    item.sign_data = sorted(item.sign_data, key=lambda k: -KeyUseForEnum[k.req_type.upper()].value)
+
+    # check params
+    check_params = []
+    for idx, sign_item in enumerate(item.sign_data, start=1):
+        pk_cred = PKCredential.new(sign_item.data, sign_item.req_type, user_info.user, "")
+        try:
+            ok, key_data = pk_cred.check_pub_key_avail()
+            if not ok:
+                check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 400, 'msg': key_data})
+        except Exception as e:
+            check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 400, 'msg': str(e)})
+        else:
+            check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'msg': "ok"})
+
+    if any([i['code'] != 200 for i in check_params]):
+        return BadRequestMessage(message='parameter validation error', data=check_params)
+
+    item.username = user_info.user
+    device_dao = user_keys.UserDeviceDao(db)
+    is_byod = False
+    try:
+        is_byod = openapi.OpenApi().is_byod(item.username, item.device_sn)
+    except:
+        logger.error("get user device byod error")
+    logger.info(f"get user[{item.username}] device[{item.device_sn}] byod[{is_byod}]")
+    item.is_byod = is_byod
+    device_item = device_dao.add(item)
+
+    user_keys_dao = user_keys.UserKeysDao(db)
+    user_cert_dao = user_keys.UserCertDao(db)
+
+    rest = []
+    expire_time = None
+
+    for idx, sign_item in enumerate(item.sign_data, start=1):
+        pk_cred = PKCredential.new(sign_item.data, sign_item.req_type, user_info.user, device_item.expire_time)
+        _, key_data = pk_cred.check_pub_key_avail()
+        device_info = schema.CreateUserPubkeyItem(
+            device_id=device_item.id,
+            fingerprint=key_data.fingerprint,
+            pub_key=key_data.pubkey,
+        )
+        user_key = user_keys_dao.device_register(device_info, KeyUseForEnum[sign_item.req_type.upper()].value)
+        if sign_item.req_type == KeyUseForEnum.HTTP.name.lower():
+            sign_data = pk_cred.sign()
+            expire_time = sign_data.expire_time
+            user_cert_dao.add(device_item.id, user_key.id, sign_data.sn, sign_data.cert, sign_data.expire_time)
+            rest.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'data': sign_data.cert})
+            logger.info("cert len %d" % len(sign_data.cert), extra={
+                "event": "sign",
+                "user": user_info.user,
+                "type": "http",
+                "trace_id": uuid_str,
+            })
+        else:
+            # TODO: 有效期先手动改成5年
+            pk_cred.expire_time = expire_time
+            sign_data = pk_cred.sign(bio=bool(item.support_biometrics))
+            rest.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'data': str(sign_data)})
+            logger.info("ssh key len %d" % len(str(sign_data)), extra={
+                "event": "sign",
+                "user": user_info.user,
+                "type": "ssh",
+                "trace_id": uuid_str,
+            })
+
+    # TODO: 有效期先手动改成5年
+    device_item.expire_time = expire_time
+
+    op_dao = user_keys.OpRecordDao(db)
+    op_dao.add(
+        user_info.user,
+        device_item.id,
+        model.OpTypeEnum.SIGN.value,
+        {"event": "sign", "device_sn": item.device_sn, "id": device_item.id},
+    )
+    logger.info("end", extra={
+        "event": "sign",
+        "user": user_info.user,
+        "trace_id": uuid_str,
+    })
+    return Message(message="OK", data=rest)
+
+
+class QueryDeviceListSchema(schema.QuerySchema):
+    device_sn: Optional[str] = None
+
+import datetime
+import uuid
+from typing import Literal, List, Optional
+
+from fastapi import APIRouter, Depends, Request
+from pydantic import BaseModel, constr
+
+from config.config import Config
+from device_auth import utils
+from device_auth.db import session, user_keys, model
+from device_auth.api.base import AgentApiReqUser
+from device_auth.db.model import KeyUseForEnum
+from device_auth.logger import logger
+from device_auth.schema import schema
+from device_auth.api.message import Message, BadRequestMessage
+from device_auth.schema.user_schema import UserDeviceSchema
+from device_auth.third_api import ca_api, relay_api, openapi
+from device_auth.service.register import PKCredential
+from device_auth.utils import pub_key_crypt
+
+router = APIRouter()
+
+
+class SignItem(BaseModel):
+    data: constr(strip_whitespace=True)
+    req_type: Literal[KeyUseForEnum.SSH.name.lower(), KeyUseForEnum.HTTP.name.lower()]
+
+
+class DeviceSignSchema(UserDeviceSchema):
+    sign_data: List[SignItem]
+
+
+@router.post("/api/user/device/sign")
+async def device_register(item: DeviceSignSchema,
+                          db=Depends(session.get_db),
+                          user_info=Depends(AgentApiReqUser)):
+    """
+    ssh公钥注册 + 签发证书
+    """
+    # 强制让http的证书放第一个，方便后面取有效期
+    uuid_str = uuid.uuid4().hex
+
+    logger.info("start sign", extra={
+        "event": "sign",
+        "user": user_info.user,
+        "trace_id": uuid_str,
+        "data": item.model_dump(),
+    })
+    item.sign_data = sorted(item.sign_data, key=lambda k: -KeyUseForEnum[k.req_type.upper()].value)
+
+    # check params
+    check_params = []
+    for idx, sign_item in enumerate(item.sign_data, start=1):
+        pk_cred = PKCredential.new(sign_item.data, sign_item.req_type, user_info.user, "")
+        try:
+            ok, key_data = pk_cred.check_pub_key_avail()
+            if not ok:
+                check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 400, 'msg': key_data})
+        except Exception as e:
+            check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 400, 'msg': str(e)})
+        else:
+            check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'msg': "ok"})
+
+    if any([i['code'] != 200 for i in check_params]):
+        return BadRequestMessage(message='parameter validation error', data=check_params)
+
+    item.username = user_info.user
+    device_dao = user_keys.UserDeviceDao(db)
+    is_byod = False
+    try:
+        is_byod = openapi.OpenApi().is_byod(item.username, item.device_sn)
+    except:
+        logger.error("get user device byod error")
+    logger.info(f"get user[{item.username}] device[{item.device_sn}] byod[{is_byod}]")
+    item.is_byod = is_byod
+    device_item = device_dao.add(item)
+
+    user_keys_dao = user_keys.UserKeysDao(db)
+    user_cert_dao = user_keys.UserCertDao(db)
+
+    rest = []
+    expire_time = None
+
+    for idx, sign_item in enumerate(item.sign_data, start=1):
+        pk_cred = PKCredential.new(sign_item.data, sign_item.req_type, user_info.user, device_item.expire_time)
+        _, key_data = pk_cred.check_pub_key_avail()
+        device_info = schema.CreateUserPubkeyItem(
+            device_id=device_item.id,
+            fingerprint=key_data.fingerprint,
+            pub_key=key_data.pubkey,
+        )
+        user_key = user_keys_dao.device_register(device_info, KeyUseForEnum[sign_item.req_type.upper()].value)
+        if sign_item.req_type == KeyUseForEnum.HTTP.name.lower():
+            sign_data = pk_cred.sign()
+            expire_time = sign_data.expire_time
+            user_cert_dao.add(device_item.id, user_key.id, sign_data.sn, sign_data.cert, sign_data.expire_time)
+            rest.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'data': sign_data.cert})
+            logger.info("cert len %d" % len(sign_data.cert), extra={
+                "event": "sign",
+                "user": user_info.user,
+                "type": "http",
+                "trace_id": uuid_str,
+            })
+        else:
+            # TODO: 有效期先手动改成5年
+            pk_cred.expire_time = expire_time
+            sign_data = pk_cred.sign(bio=bool(item.support_biometrics))
+            rest.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'data': str(sign_data)})
+            logger.info("ssh key len %d" % len(str(sign_data)), extra={
+                "event": "sign",
+                "user": user_info.user,
+                "type": "ssh",
+                "trace_id": uuid_str,
+            })
+
+    # TODO: 有效期先手动改成5年
+    device_item.expire_time = expire_time
+
+    op_dao = user_keys.OpRecordDao(db)
+    op_dao.add(
+        user_info.user,
+        device_item.id,
+        model.OpTypeEnum.SIGN.value,
+        {"event": "sign", "device_sn": item.device_sn, "id": device_item.id},
+    )
+    logger.info("end", extra={
+        "event": "sign",
+        "user": user_info.user,
+        "trace_id": uuid_str,
+    })
+    return Message(message="OK", data=rest)
+
+
+class QueryDeviceListSchema(schema.QuerySchema):
+    device_sn: Optional[str] = None
+
+import datetime
+import uuid
+from typing import Literal, List, Optional
+
+from fastapi import APIRouter, Depends, Request
+from pydantic import BaseModel, constr
+
+from config.config import Config
+from device_auth import utils
+from device_auth.db import session, user_keys, model
+from device_auth.api.base import AgentApiReqUser
+from device_auth.db.model import KeyUseForEnum
+from device_auth.logger import logger
+from device_auth.schema import schema
+from device_auth.api.message import Message, BadRequestMessage
+from device_auth.schema.user_schema import UserDeviceSchema
+from device_auth.third_api import ca_api, relay_api, openapi
+from device_auth.service.register import PKCredential
+from device_auth.utils import pub_key_crypt
+
+router = APIRouter()
+
+
+class SignItem(BaseModel):
+    data: constr(strip_whitespace=True)
+    req_type: Literal[KeyUseForEnum.SSH.name.lower(), KeyUseForEnum.HTTP.name.lower()]
+
+
+class DeviceSignSchema(UserDeviceSchema):
+    sign_data: List[SignItem]
+
+
+@router.post("/api/user/device/sign")
+async def device_register(item: DeviceSignSchema,
+                          db=Depends(session.get_db),
+                          user_info=Depends(AgentApiReqUser)):
+    """
+    ssh公钥注册 + 签发证书
+    """
+    # 强制让http的证书放第一个，方便后面取有效期
+    uuid_str = uuid.uuid4().hex
+
+    logger.info("start sign", extra={
+        "event": "sign",
+        "user": user_info.user,
+        "trace_id": uuid_str,
+        "data": item.model_dump(),
+    })
+    item.sign_data = sorted(item.sign_data, key=lambda k: -KeyUseForEnum[k.req_type.upper()].value)
+
+    # check params
+    check_params = []
+    for idx, sign_item in enumerate(item.sign_data, start=1):
+        pk_cred = PKCredential.new(sign_item.data, sign_item.req_type, user_info.user, "")
+        try:
+            ok, key_data = pk_cred.check_pub_key_avail()
+            if not ok:
+                check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 400, 'msg': key_data})
+        except Exception as e:
+            check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 400, 'msg': str(e)})
+        else:
+            check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'msg': "ok"})
+
+    if any([i['code'] != 200 for i in check_params]):
+        return BadRequestMessage(message='parameter validation error', data=check_params)
+
+    item.username = user_info.user
+    device_dao = user_keys.UserDeviceDao(db)
+    is_byod = False
+    try:
+        is_byod = openapi.OpenApi().is_byod(item.username, item.device_sn)
+    except:
+        logger.error("get user device byod error")
+    logger.info(f"get user[{item.username}] device[{item.device_sn}] byod[{is_byod}]")
+    item.is_byod = is_byod
+    device_item = device_dao.add(item)
+
+    user_keys_dao = user_keys.UserKeysDao(db)
+    user_cert_dao = user_keys.UserCertDao(db)
+
+    rest = []
+    expire_time = None
+
+    for idx, sign_item in enumerate(item.sign_data, start=1):
+        pk_cred = PKCredential.new(sign_item.data, sign_item.req_type, user_info.user, device_item.expire_time)
+        _, key_data = pk_cred.check_pub_key_avail()
+        device_info = schema.CreateUserPubkeyItem(
+            device_id=device_item.id,
+            fingerprint=key_data.fingerprint,
+            pub_key=key_data.pubkey,
+        )
+        user_key = user_keys_dao.device_register(device_info, KeyUseForEnum[sign_item.req_type.upper()].value)
+        if sign_item.req_type == KeyUseForEnum.HTTP.name.lower():
+            sign_data = pk_cred.sign()
+            expire_time = sign_data.expire_time
+            user_cert_dao.add(device_item.id, user_key.id, sign_data.sn, sign_data.cert, sign_data.expire_time)
+            rest.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'data': sign_data.cert})
+            logger.info("cert len %d" % len(sign_data.cert), extra={
+                "event": "sign",
+                "user": user_info.user,
+                "type": "http",
+                "trace_id": uuid_str,
+            })
+        else:
+            # TODO: 有效期先手动改成5年
+            pk_cred.expire_time = expire_time
+            sign_data = pk_cred.sign(bio=bool(item.support_biometrics))
+            rest.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'data': str(sign_data)})
+            logger.info("ssh key len %d" % len(str(sign_data)), extra={
+                "event": "sign",
+                "user": user_info.user,
+                "type": "ssh",
+                "trace_id": uuid_str,
+            })
+
+    # TODO: 有效期先手动改成5年
+    device_item.expire_time = expire_time
+
+    op_dao = user_keys.OpRecordDao(db)
+    op_dao.add(
+        user_info.user,
+        device_item.id,
+        model.OpTypeEnum.SIGN.value,
+        {"event": "sign", "device_sn": item.device_sn, "id": device_item.id},
+    )
+    logger.info("end", extra={
+        "event": "sign",
+        "user": user_info.user,
+        "trace_id": uuid_str,
+    })
+    return Message(message="OK", data=rest)
+
+
+class QueryDeviceListSchema(schema.QuerySchema):
+    device_sn: Optional[str] = None
+
+import datetime
+import uuid
+from typing import Literal, List, Optional
+
+from fastapi import APIRouter, Depends, Request
+from pydantic import BaseModel, constr
+
+from config.config import Config
+from device_auth import utils
+from device_auth.db import session, user_keys, model
+from device_auth.api.base import AgentApiReqUser
+from device_auth.db.model import KeyUseForEnum
+from device_auth.logger import logger
+from device_auth.schema import schema
+from device_auth.api.message import Message, BadRequestMessage
+from device_auth.schema.user_schema import UserDeviceSchema
+from device_auth.third_api import ca_api, relay_api, openapi
+from device_auth.service.register import PKCredential
+from device_auth.utils import pub_key_crypt
+
+router = APIRouter()
+
+
+class SignItem(BaseModel):
+    data: constr(strip_whitespace=True)
+    req_type: Literal[KeyUseForEnum.SSH.name.lower(), KeyUseForEnum.HTTP.name.lower()]
+
+
+class DeviceSignSchema(UserDeviceSchema):
+    sign_data: List[SignItem]
+
+
+@router.post("/api/user/device/sign")
+async def device_register(item: DeviceSignSchema,
+                          db=Depends(session.get_db),
+                          user_info=Depends(AgentApiReqUser)):
+    """
+    ssh公钥注册 + 签发证书
+    """
+    # 强制让http的证书放第一个，方便后面取有效期
+    uuid_str = uuid.uuid4().hex
+
+    logger.info("start sign", extra={
+        "event": "sign",
+        "user": user_info.user,
+        "trace_id": uuid_str,
+        "data": item.model_dump(),
+    })
+    item.sign_data = sorted(item.sign_data, key=lambda k: -KeyUseForEnum[k.req_type.upper()].value)
+
+    # check params
+    check_params = []
+    for idx, sign_item in enumerate(item.sign_data, start=1):
+        pk_cred = PKCredential.new(sign_item.data, sign_item.req_type, user_info.user, "")
+        try:
+            ok, key_data = pk_cred.check_pub_key_avail()
+            if not ok:
+                check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 400, 'msg': key_data})
+        except Exception as e:
+            check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 400, 'msg': str(e)})
+        else:
+            check_params.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'msg': "ok"})
+
+    if any([i['code'] != 200 for i in check_params]):
+        return BadRequestMessage(message='parameter validation error', data=check_params)
+
+    item.username = user_info.user
+    device_dao = user_keys.UserDeviceDao(db)
+    is_byod = False
+    try:
+        is_byod = openapi.OpenApi().is_byod(item.username, item.device_sn)
+    except:
+        logger.error("get user device byod error")
+    logger.info(f"get user[{item.username}] device[{item.device_sn}] byod[{is_byod}]")
+    item.is_byod = is_byod
+    device_item = device_dao.add(item)
+
+    user_keys_dao = user_keys.UserKeysDao(db)
+    user_cert_dao = user_keys.UserCertDao(db)
+
+    rest = []
+    expire_time = None
+
+    for idx, sign_item in enumerate(item.sign_data, start=1):
+        pk_cred = PKCredential.new(sign_item.data, sign_item.req_type, user_info.user, device_item.expire_time)
+        _, key_data = pk_cred.check_pub_key_avail()
+        device_info = schema.CreateUserPubkeyItem(
+            device_id=device_item.id,
+            fingerprint=key_data.fingerprint,
+            pub_key=key_data.pubkey,
+        )
+        user_key = user_keys_dao.device_register(device_info, KeyUseForEnum[sign_item.req_type.upper()].value)
+        if sign_item.req_type == KeyUseForEnum.HTTP.name.lower():
+            sign_data = pk_cred.sign()
+            expire_time = sign_data.expire_time
+            user_cert_dao.add(device_item.id, user_key.id, sign_data.sn, sign_data.cert, sign_data.expire_time)
+            rest.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'data': sign_data.cert})
+            logger.info("cert len %d" % len(sign_data.cert), extra={
+                "event": "sign",
+                "user": user_info.user,
+                "type": "http",
+                "trace_id": uuid_str,
+            })
+        else:
+            # TODO: 有效期先手动改成5年
+            pk_cred.expire_time = expire_time
+            sign_data = pk_cred.sign(bio=bool(item.support_biometrics))
+            rest.append({'idx': idx, 'type': sign_item.req_type, 'code': 200, 'data': str(sign_data)})
+            logger.info("ssh key len %d" % len(str(sign_data)), extra={
+                "event": "sign",
+                "user": user_info.user,
+                "type": "ssh",
+                "trace_id": uuid_str,
+            })
+
+    # TODO: 有效期先手动改成5年
+    device_item.expire_time = expire_time
+
+    op_dao = user_keys.OpRecordDao(db)
+    op_dao.add(
+        user_info.user,
+        device_item.id,
+        model.OpTypeEnum.SIGN.value,
+        {"event": "sign", "device_sn": item.device_sn, "id": device_item.id},
+    )
+    logger.info("end", extra={
+        "event": "sign",
+        "user": user_info.user,
+        "trace_id": uuid_str,
+    })
+    return Message(message="OK", data=rest)
+
+
+class QueryDeviceListSchema(schema.QuerySchema):
+    device_sn: Optional[str] = None
+
+oooo
+```
+
+
+
+## XSS
+
+### 原理
+
+攻击者在网页中插入了恶意代码，当用户使用浏览器访问被插入恶意代码的网页时，恶意代码在用户的浏览器上执行。
+
+### 类型
+
+*   反射，需要欺骗用户点击、经过后台
+*   存储，恶意代码存储到服务器端，经过后台
+*   DOM：前端从URL中获取XSS代码输出到页面，不经过后台，比如使用document.write、.innerHTML、outerHTML等函数进行HTML注入
+
+## 标题二
+
+阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送
+
+阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送
+
+阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送
+
+阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送
+
+
+
+### 标题三
+
+阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送
+
+阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送
+
+阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送
+
+
+
+#### 标题四
+
+阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送
+
+阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送
+
+阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送
+
+##### 标题五
+
+阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送
+
+阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送阿水淀粉撒发送
+
+

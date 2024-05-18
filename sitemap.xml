@@ -1,0 +1,10 @@
+<urlset
+    xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+    xmlns:xhtml="http://www.w3.org/1999/xhtml"
+    ><url>
+            <loc>http://5ky.top/</loc><lastmod>2024-05-17T12:56:48&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>http://5ky.top/posts/</loc><lastmod>2024-05-17T12:56:48&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>http://5ky.top/about/</loc><lastmod>2019-08-02T11:04:49&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>http://5ky.top/categories/</loc><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>http://5ky.top/tags/</loc><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>http://5ky.top/categories/a/</loc><changefreq>weekly</changefreq><priority>0.5</priority></url></urlset>

@@ -1,0 +1,9 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>5ky, Irritable every day</title>
+        <link>http://5ky.top/</link>
+        <description>Sharing network security, sharing life and growth.</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 17 May 2024 12:56:48 &#43;0800</lastBuildDate>
+            <atom:link href="http://5ky.top/index.xml" rel="self" type="application/rss+xml" />
+        </channel>
+</rss>
