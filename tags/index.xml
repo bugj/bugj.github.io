@@ -1,7 +1,31 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>Tags - 标签 - 5ky, Irritable every day</title>
-        <link>http://5ky.top/tags/</link>
+        <link>http://localhost:1313/tags/</link>
         <description>Tags - 标签 - 5ky, Irritable every day</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="http://5ky.top/tags/" rel="self" type="application/rss+xml" /></channel>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 17 May 2024 12:56:48 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/tags/" rel="self" type="application/rss+xml" /><item>
+    <title>.Net Framework</title>
+    <link>http://localhost:1313/tags/.net-framework/</link>
+    <pubDate>Fri, 17 May 2024 12:56:48 &#43;0800</pubDate>
+    <author>Ty</author>
+    <guid>http://localhost:1313/tags/.net-framework/</guid>
+    <description><![CDATA[]]></description>
+</item>
+<item>
+    <title>CSharp</title>
+    <link>http://localhost:1313/tags/csharp/</link>
+    <pubDate>Fri, 17 May 2024 12:56:48 &#43;0800</pubDate>
+    <author>Ty</author>
+    <guid>http://localhost:1313/tags/csharp/</guid>
+    <description><![CDATA[]]></description>
+</item>
+<item>
+    <title>工厂技改项目</title>
+    <link>http://localhost:1313/tags/%E5%B7%A5%E5%8E%82%E6%8A%80%E6%94%B9%E9%A1%B9%E7%9B%AE/</link>
+    <pubDate>Fri, 17 May 2024 12:56:48 &#43;0800</pubDate>
+    <author>Ty</author>
+    <guid>http://localhost:1313/tags/%E5%B7%A5%E5%8E%82%E6%8A%80%E6%94%B9%E9%A1%B9%E7%9B%AE/</guid>
+    <description><![CDATA[]]></description>
+</item>
+</channel>
 </rss>
