@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title> hibernate validate EL表达式注入漏洞 - 5ky - Fly with 5ky.</title><meta name="Description" content="5ky是一个知识和灵感的分享平台，更新有趣的生活方式，包括关于技术、文化、商业等内容，一个自由表达观点的博客。"><meta property="og:url" content="http://5ky.top/posts/hibernatevalidateelinjection/">
+  <meta property="og:site_name" content="5ky - Fly with 5ky.">
+  <meta property="og:title" content=" hibernate validate EL表达式注入漏洞">
+  <meta property="og:description" content="一、漏洞分析 官方给出的漏洞，版本1：https://mvnrepository.com/artifact/org.hibernate.val">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-05-20T12:56:53+08:00">
+    <meta property="article:modified_time" content="2024-05-20T12:56:53+08:00">
+    <meta property="article:tag" content="漏洞研究">
+    <meta property="article:tag" content="EL表达式注入">
+    <meta property="og:image" content="http://5ky.top/">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://5ky.top/">
+  <meta name="twitter:title" content=" hibernate validate EL表达式注入漏洞">
+  <meta name="twitter:description" content="一、漏洞分析 官方给出的漏洞，版本1：https://mvnrepository.com/artifact/org.hibernate.val">
+<meta name="application-name" content="5ky">
+<meta name="apple-mobile-web-app-title" content="5ky"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/images/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://5ky.top/posts/hibernatevalidateelinjection/" /><link rel="prev" href="http://5ky.top/posts/readaweb3book/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": " hibernate validate EL表达式注入漏洞",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/5ky.top\/posts\/hibernatevalidateelinjection\/"
+        },"genre": "posts","keywords": "漏洞研究, EL表达式注入","wordcount":  1276 ,
+        "url": "http:\/\/5ky.top\/posts\/hibernatevalidateelinjection\/","datePublished": "2024-05-20T12:56:53+08:00","dateModified": "2024-05-20T12:56:53+08:00","license": "5ky是一个知识和灵感的分享平台，更新有趣的生活方式，包括关于技术、文化、商业等内容，一个自由表达观点的博客。","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Ty"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="fixed"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('dark' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'dark' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="5ky - Fly with 5ky."><span class="header-title-pre"><i class='fas fa-rocket fa-fw' aria-hidden='true'></i></span>5ky</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="5ky - Fly with 5ky."><span class="header-title-pre"><i class='fas fa-rocket fa-fw' aria-hidden='true'></i></span>5ky</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX"> hibernate validate EL表达式注入漏洞</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Ty</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>网络安全</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2024-05-20">2024-05-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;约 1276 字&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;预计阅读 3 分钟&nbsp;<span id="/posts/hibernatevalidateelinjection/" class="leancloud_visitors" data-flag-title=" hibernate validate EL表达式注入漏洞">
+                        <i class="far fa-eye fa-fw" aria-hidden="true"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                    </span>&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#一漏洞分析">一、漏洞分析</a></li>
+    <li><a href="#二未受影响版本">二、未受影响版本</a></li>
+    <li><a href="#三官方修复方案">三、官方修复方案</a>
+      <ul>
+        <li><a href="#1使用参数化的消息模板"><strong>1、使用参数化的消息模板</strong></a></li>
+        <li><a href="#2升级hibernate-validator版本">2、升级hibernate-validator版本</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="一漏洞分析">一、漏洞分析</h2>
+<p>官方给出的漏洞，版本1：https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/hibernatevalidateelinjection/out-20240520131033260.png"
+        data-srcset="/posts/hibernatevalidateelinjection/out-20240520131033260.png, /posts/hibernatevalidateelinjection/out-20240520131033260.png 1.5x, /posts/hibernatevalidateelinjection/out-20240520131033260.png 2x"
+        data-sizes="auto"
+        alt="/posts/hibernatevalidateelinjection/out-20240520131033260.png"
+        title="img" /></p>
+<p>未提有漏洞，实测存在漏洞，版本2（不做参考）：</p>
+<p><a href="https://mvnrepository.com/artifact/org.hibernate/hibernate-validator" target="_blank" rel="noopener noreffer ">https://mvnrepository.com/artifact/org.hibernate/hibernate-validator</a></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/hibernatevalidateelinjection/out-20240520131048738.png"
+        data-srcset="/posts/hibernatevalidateelinjection/out-20240520131048738.png, /posts/hibernatevalidateelinjection/out-20240520131048738.png 1.5x, /posts/hibernatevalidateelinjection/out-20240520131048738.png 2x"
+        data-sizes="auto"
+        alt="/posts/hibernatevalidateelinjection/out-20240520131048738.png"
+        title="img" /></p>
+<p>6.1.4及以下版本指向同一漏洞编号，CVE-2020-10693（EL表达式注入）</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/hibernatevalidateelinjection/out-20240520131347923.png"
+        data-srcset="/posts/hibernatevalidateelinjection/out-20240520131347923.png, /posts/hibernatevalidateelinjection/out-20240520131347923.png 1.5x, /posts/hibernatevalidateelinjection/out-20240520131347923.png 2x"
+        data-sizes="auto"
+        alt="/posts/hibernatevalidateelinjection/out-20240520131347923.png"
+        title="img" /></p>
+<p>实际测试，使用无漏洞版本6.1.*最高版本(6.1.7)进行测试，依然能rce</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/hibernatevalidateelinjection/out-20240520131332305.png"
+        data-srcset="/posts/hibernatevalidateelinjection/out-20240520131332305.png, /posts/hibernatevalidateelinjection/out-20240520131332305.png 1.5x, /posts/hibernatevalidateelinjection/out-20240520131332305.png 2x"
+        data-sizes="auto"
+        alt="/posts/hibernatevalidateelinjection/out-20240520131332305.png"
+        title="img" /></p>
+<p>debug跟踪，关键代码如下</p>
+<p>/org/hibernate/validator/hibernate-validator/6.1.7.Final/hibernate-validator-6.1.7.Final.jar!/org/hibernate/validator/messageinterpolation/AbstractMessageInterpolator.class</p>
+<p>分为三步：</p>
+<ol>
+<li>从参数中拿出message</li>
+<li>判断是否有{，解析要执行的参数</li>
+<li>执行el表达式</li>
+</ol>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/hibernatevalidateelinjection/out-20240520131319381.png"
+        data-srcset="/posts/hibernatevalidateelinjection/out-20240520131319381.png, /posts/hibernatevalidateelinjection/out-20240520131319381.png 1.5x, /posts/hibernatevalidateelinjection/out-20240520131319381.png 2x"
+        data-sizes="auto"
+        alt="/posts/hibernatevalidateelinjection/out-20240520131319381.png"
+        title="img" /></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/hibernatevalidateelinjection/out-20240520131314638.png"
+        data-srcset="/posts/hibernatevalidateelinjection/out-20240520131314638.png, /posts/hibernatevalidateelinjection/out-20240520131314638.png 1.5x, /posts/hibernatevalidateelinjection/out-20240520131314638.png 2x"
+        data-sizes="auto"
+        alt="/posts/hibernatevalidateelinjection/out-20240520131314638.png"
+        title="img" /></p>
+<p>以下是执行时过程代码，可忽略</p>
+<p>/org/hibernate/validator/hibernate-validator/6.1.7.Final/hibernate-validator-6.1.7.Final.jar!/org/hibernate/validator/messageinterpolation/ResourceBundleMessageInterpolator.class</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/hibernatevalidateelinjection/out-20240520131301642.png"
+        data-srcset="/posts/hibernatevalidateelinjection/out-20240520131301642.png, /posts/hibernatevalidateelinjection/out-20240520131301642.png 1.5x, /posts/hibernatevalidateelinjection/out-20240520131301642.png 2x"
+        data-sizes="auto"
+        alt="/posts/hibernatevalidateelinjection/out-20240520131301642.png"
+        title="img" /></p>
+<p>/org/hibernate/validator/hibernate-validator/6.1.7.Final/hibernate-validator-6.1.7.Final.jar!/org/hibernate/validator/internal/engine/messageinterpolation/InterpolationTerm.class</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/hibernatevalidateelinjection/out-20240520131253009.png"
+        data-srcset="/posts/hibernatevalidateelinjection/out-20240520131253009.png, /posts/hibernatevalidateelinjection/out-20240520131253009.png 1.5x, /posts/hibernatevalidateelinjection/out-20240520131253009.png 2x"
+        data-sizes="auto"
+        alt="/posts/hibernatevalidateelinjection/out-20240520131253009.png"
+        title="img" /></p>
+<p>/org/hibernate/validator/hibernate-validator/6.1.7.Final/hibernate-validator-6.1.7.Final.jar!/org/hibernate/validator/internal/engine/messageinterpolation/ElTermResolver.class</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/hibernatevalidateelinjection/out-20240520131242148.png"
+        data-srcset="/posts/hibernatevalidateelinjection/out-20240520131242148.png, /posts/hibernatevalidateelinjection/out-20240520131242148.png 1.5x, /posts/hibernatevalidateelinjection/out-20240520131242148.png 2x"
+        data-sizes="auto"
+        alt="/posts/hibernatevalidateelinjection/out-20240520131242148.png"
+        title="img" /></p>
+<p>结论：官方在6.1.7.Final中并未处理EL表达式拼接，也未在公告中说明这个版本存在问题（他说没漏洞实际有漏洞，作为特性个人认为官方不认漏洞，但在大版本6.2.0修复了缺陷）</p>
+<h2 id="二未受影响版本">二、未受影响版本</h2>
+<p>实际测试6.2.0.Final，一二步没有任何变化</p>
+<p>/org/hibernate/validator/hibernate-validator/6.2.0.Final/hibernate-validator-6.2.0.Final.jar!/org/hibernate/validator/messageinterpolation/AbstractMessageInterpolator.class</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/hibernatevalidateelinjection/out-20240520131232131.png"
+        data-srcset="/posts/hibernatevalidateelinjection/out-20240520131232131.png, /posts/hibernatevalidateelinjection/out-20240520131232131.png 1.5x, /posts/hibernatevalidateelinjection/out-20240520131232131.png 2x"
+        data-sizes="auto"
+        alt="/posts/hibernatevalidateelinjection/out-20240520131232131.png"
+        title="img" /></p>
+<p>第三步判断了EL表达式语言引擎启用的功能级别，NONE不执行EL表达式（默认为NONE）</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/hibernatevalidateelinjection/out-20240520131223251.png"
+        data-srcset="/posts/hibernatevalidateelinjection/out-20240520131223251.png, /posts/hibernatevalidateelinjection/out-20240520131223251.png 1.5x, /posts/hibernatevalidateelinjection/out-20240520131223251.png 2x"
+        data-sizes="auto"
+        alt="/posts/hibernatevalidateelinjection/out-20240520131223251.png"
+        title="img" /></p>
+<p>Hibernate Validator 6.2.0.Final 开始提供了EL表达式几个功能级别，可以通过ExpressionLanguageFeatureLevel枚举：</p>
+<ul>
+<li>NONE 表达式语言内插完全禁用。</li>
+<li>VARIABLES 允许通过addExpressionVariable()的资源包和使用formatter对象。</li>
+<li>BEAN_PROPERTIES 允许一切VARIABLES允许加上bean属性的插值。</li>
+<li>BEAN_METHODS 还允许执行bean方法。</li>
+</ul>
+<p>/org/hibernate/validator/hibernate-validator/6.2.0.Final/hibernate-validator-6.2.0.Final.jar!/org/hibernate/validator/internal/engine/constraintvalidation/ConstraintValidatorContextImpl.class</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/posts/hibernatevalidateelinjection/out-20240520131208941.png"
+        data-srcset="/posts/hibernatevalidateelinjection/out-20240520131208941.png, /posts/hibernatevalidateelinjection/out-20240520131208941.png 1.5x, /posts/hibernatevalidateelinjection/out-20240520131208941.png 2x"
+        data-sizes="auto"
+        alt="/posts/hibernatevalidateelinjection/out-20240520131208941.png"
+        title="img" /></p>
+<h2 id="三官方修复方案">三、官方修复方案</h2>
+<p>错误用法示例（关键代码14行）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MonthValidatorProcess</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ConstraintValidator</span><span class="o">&lt;</span><span class="n">MonthValidator</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">DateTimeFormatter</span><span class="w"> </span><span class="n">YEAR_MONTH_DATE_FORMATTER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DateTimeFormatter</span><span class="p">.</span><span class="na">ofPattern</span><span class="p">(</span><span class="s">&#34;yyyyMMdd&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">isValid</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">yearMonth</span><span class="p">,</span><span class="w"> </span><span class="n">ConstraintValidatorContext</span><span class="w"> </span><span class="n">constraintValidatorContext</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">StringUtils</span><span class="p">.</span><span class="na">isBlank</span><span class="p">(</span><span class="n">yearMonth</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">yearMonthDay</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">yearMonth</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;01&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">LocalDate</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">yearMonthDay</span><span class="p">,</span><span class="w"> </span><span class="n">YEAR_MONTH_DATE_FORMATTER</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Throwable</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">constraintValidatorContext</span><span class="p">.</span><span class="na">disableDefaultConstraintViolation</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">constraintValidatorContext</span><span class="p">.</span><span class="na">buildConstraintViolationWithTemplate</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="s">&#34;日期[%s]不合法&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">yearMonth</span><span class="p">))</span><span class="w"> </span><span class="c1">// String字符串直接拼接到buildConstraintViolationWithTemplate</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">addConstraintViolation</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="1使用参数化的消息模板"><strong>1、使用参数化的消息模板</strong></h3>
+<p>正确用法示例（关键代码15行）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MonthValidatorProcess</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ConstraintValidator</span><span class="o">&lt;</span><span class="n">MonthValidator</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">DateTimeFormatter</span><span class="w"> </span><span class="n">YEAR_MONTH_DATE_FORMATTER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DateTimeFormatter</span><span class="p">.</span><span class="na">ofPattern</span><span class="p">(</span><span class="s">&#34;yyyyMMdd&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">isValid</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">yearMonth</span><span class="p">,</span><span class="w"> </span><span class="n">ConstraintValidatorContext</span><span class="w"> </span><span class="n">constraintValidatorContext</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">StringUtils</span><span class="p">.</span><span class="na">isBlank</span><span class="p">(</span><span class="n">yearMonth</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">yearMonthDay</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">yearMonth</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;01&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">LocalDate</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">yearMonthDay</span><span class="p">,</span><span class="w"> </span><span class="n">YEAR_MONTH_DATE_FORMATTER</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Throwable</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">HibernateConstraintValidatorContext</span><span class="w"> </span><span class="n">hcontext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">constraintValidatorContext</span><span class="p">.</span><span class="na">unwrap</span><span class="p">(</span><span class="n">HibernateConstraintValidatorContext</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">hcontext</span><span class="p">.</span><span class="na">disableDefaultConstraintViolation</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">hcontext</span><span class="p">.</span><span class="na">addExpressionVariable</span><span class="p">(</span><span class="s">&#34;validatedValue&#34;</span><span class="p">,</span><span class="n">yearMonth</span><span class="p">).</span><span class="na">buildConstraintViolationWithTemplate</span><span class="p">(</span><span class="s">&#34;日期${validatedValue}不合法&#34;</span><span class="p">)</span><span class="w"> </span><span class="c1">// 使用addExpressionVariable参数绑定</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="p">.</span><span class="na">addConstraintViolation</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2升级hibernate-validator版本">2、升级hibernate-validator版本</h3>
+<p>升级hibernate-validator大于等于6.2.0.final（官方在大于等于6.2.0.final中判断了EL表达式语言引擎启用的功能级别，默认级别不执行EL表达式）</p>
+<p>注：7.0.0及以上版本存在较大变更，虽然不存在漏洞，但很多方法都变了，需要重新写hibernate</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2024-05-20</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="http://5ky.top/posts/hibernatevalidateelinjection/" data-title=" hibernate validate EL表达式注入漏洞" data-hashtags="漏洞研究,EL表达式注入"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://5ky.top/posts/hibernatevalidateelinjection/" data-hashtag="漏洞研究"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="分享到 WhatsApp" data-sharer="whatsapp" data-url="http://5ky.top/posts/hibernatevalidateelinjection/" data-title=" hibernate validate EL表达式注入漏洞" data-web><i class="fab fa-whatsapp fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="http://5ky.top/posts/hibernatevalidateelinjection/" data-title=" hibernate validate EL表达式注入漏洞"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="分享到 Reddit" data-sharer="reddit" data-url="http://5ky.top/posts/hibernatevalidateelinjection/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="http://5ky.top/posts/hibernatevalidateelinjection/" data-title=" hibernate validate EL表达式注入漏洞"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://5ky.top/posts/hibernatevalidateelinjection/" data-title=" hibernate validate EL表达式注入漏洞"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/%E6%BC%8F%E6%B4%9E%E7%A0%94%E7%A9%B6/">漏洞研究</a>,&nbsp;<a href="/tags/el%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5/">EL表达式注入</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/readaweb3book/" class="prev" rel="prev" title="阅读《一本书读懂Web3.0》-a15a"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>阅读《一本书读懂Web3.0》-a15a</a></div>
+</div>
+<div id="comments"><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.126.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2019 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Ty</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/css/lightgallery-bundle.min.css"><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/valine@1.5.0/dist/Valine.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.13.1/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/lightgallery.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/plugins/thumbnail/lg-thumbnail.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/plugins/zoom/lg-zoom.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"boSTVLRHsaeqWNdamzOF1ylu-MdYXbMMI","appKey":"TiHdxxyKmajS0hC5W0wo9MIH","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@14.0.0/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":false,"highlight":true,"lang":"zh-CN","pageSize":10,"placeholder":"If criticism is not free, praise is meaningless.","recordIP":true,"serverURLs":"https://bostvlrh.api.lncldglobal.com","visitor":true}},"lightgallery":true,"search":{"algoliaAppID":"IYB1J7KUN4","algoliaIndex":"5ky","algoliaSearchKey":"5e60661f72d0a8c8739f7df1887244df","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":30,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

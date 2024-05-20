@@ -1,38 +1,30 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>Categories - 分类 - 5ky and freedom - Fly with 5ky.</title>
-        <link>http://localhost:1313/categories/</link>
-        <description>Categories - 分类 - 5ky and freedom - Fly with 5ky.</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><copyright>5ky是一个知识和灵感的分享平台，更新有趣的生活方式，包括关于技术、文化、商业等内容，一个自由表达观点的博客。</copyright><lastBuildDate>Fri, 17 May 2024 12:56:48 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/categories/" rel="self" type="application/rss+xml" /><item>
-    <title>Aa</title>
-    <link>http://localhost:1313/categories/aa/</link>
-    <pubDate>Fri, 17 May 2024 12:56:48 &#43;0800</pubDate>
+        <title>Categories - 分类 - 5ky - Fly with 5ky.</title>
+        <link>http://5ky.top/categories/</link>
+        <description>Categories - 分类 - 5ky - Fly with 5ky.</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><copyright>5ky是一个知识和灵感的分享平台，更新有趣的生活方式，包括关于技术、文化、商业等内容，一个自由表达观点的博客。</copyright><lastBuildDate>Mon, 20 May 2024 12:56:53 &#43;0800</lastBuildDate><atom:link href="http://5ky.top/categories/" rel="self" type="application/rss+xml" /><item>
+    <title>网络安全</title>
+    <link>http://5ky.top/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/</link>
+    <pubDate>Mon, 20 May 2024 12:56:53 &#43;0800</pubDate>
     <author>Ty</author>
-    <guid>http://localhost:1313/categories/aa/</guid>
+    <guid>http://5ky.top/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/</guid>
     <description><![CDATA[]]></description>
 </item>
 <item>
-    <title>Cc</title>
-    <link>http://localhost:1313/categories/cc/</link>
-    <pubDate>Fri, 17 May 2024 12:56:48 &#43;0800</pubDate>
+    <title>读书心语</title>
+    <link>http://5ky.top/categories/%E8%AF%BB%E4%B9%A6%E5%BF%83%E8%AF%AD/</link>
+    <pubDate>Thu, 07 Mar 2024 12:56:48 &#43;0800</pubDate>
     <author>Ty</author>
-    <guid>http://localhost:1313/categories/cc/</guid>
-    <description><![CDATA[]]></description>
-</item>
-<item>
-    <title>案例</title>
-    <link>http://localhost:1313/categories/%E6%A1%88%E4%BE%8B/</link>
-    <pubDate>Fri, 17 May 2024 12:56:48 &#43;0800</pubDate>
-    <author>Ty</author>
-    <guid>http://localhost:1313/categories/%E6%A1%88%E4%BE%8B/</guid>
+    <guid>http://5ky.top/categories/%E8%AF%BB%E4%B9%A6%E5%BF%83%E8%AF%AD/</guid>
     <description><![CDATA[]]></description>
 </item>
 <item>
     <title>文档</title>
-    <link>http://localhost:1313/categories/a/</link>
-    <pubDate>Fri, 17 May 2024 12:56:48 &#43;0800</pubDate>
+    <link>http://5ky.top/categories/a/</link>
+    <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
     <author>Ty</author>
-    <guid>http://localhost:1313/categories/a/</guid>
+    <guid>http://5ky.top/categories/a/</guid>
     <description><![CDATA[]]></description>
 </item>
 </channel>
