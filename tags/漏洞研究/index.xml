@@ -3,10 +3,10 @@
         <title>漏洞研究 - 标签 - 5ky - Fly with 5ky.</title>
         <link>http://5ky.top/tags/%E6%BC%8F%E6%B4%9E%E7%A0%94%E7%A9%B6/</link>
         <description>漏洞研究 - 标签 - 5ky - Fly with 5ky.</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><copyright>5ky是一个知识和灵感的分享平台，更新有趣的生活方式，包括关于技术、文化、商业等内容，一个自由表达观点的博客。</copyright><lastBuildDate>Mon, 20 May 2024 12:56:53 &#43;0800</lastBuildDate><atom:link href="http://5ky.top/tags/%E6%BC%8F%E6%B4%9E%E7%A0%94%E7%A9%B6/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><copyright>5ky是一个知识和灵感的分享平台，更新有趣的生活方式，包括关于技术、文化、商业等内容，一个自由表达观点的博客。</copyright><lastBuildDate>Sat, 01 Oct 2022 12:56:53 &#43;0800</lastBuildDate><atom:link href="http://5ky.top/tags/%E6%BC%8F%E6%B4%9E%E7%A0%94%E7%A9%B6/" rel="self" type="application/rss+xml" /><item>
     <title> hibernate validate EL表达式注入漏洞</title>
     <link>http://5ky.top/posts/hibernate-validate-el-injection/</link>
-    <pubDate>Mon, 20 May 2024 12:56:53 &#43;0800</pubDate>
+    <pubDate>Sat, 01 Oct 2022 12:56:53 &#43;0800</pubDate>
     <author>Ty</author>
     <guid>http://5ky.top/posts/hibernate-validate-el-injection/</guid>
     <description><![CDATA[一、漏洞分析 官方给出的漏洞，版本1：https://mvnrepository.com/artifact/org.hibernate.val]]></description>
