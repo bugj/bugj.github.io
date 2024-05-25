@@ -1,14 +1,14 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>读书心语 - 分类 - 5ky - Fly with 5ky.</title>
-        <link>http://5ky.top/categories/%E8%AF%BB%E4%B9%A6%E5%BF%83%E8%AF%AD/</link>
-        <description>读书心语 - 分类 - 5ky - Fly with 5ky.</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><copyright>5ky是一个知识和灵感的分享平台，更新有趣的生活方式，包括关于技术、文化、商业等内容，一个自由表达观点的博客。</copyright><lastBuildDate>Thu, 07 Mar 2024 12:56:48 &#43;0800</lastBuildDate><atom:link href="http://5ky.top/categories/%E8%AF%BB%E4%B9%A6%E5%BF%83%E8%AF%AD/" rel="self" type="application/rss+xml" /><item>
+        <title>读书心语 - 分类 - 5ky&#39;s Blog&#39;</title>
+        <link>http://localhost:1313/categories/%E8%AF%BB%E4%B9%A6%E5%BF%83%E8%AF%AD/</link>
+        <description>读书心语 - 分类 - 5ky&#39;s Blog&#39;</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><copyright>5ky是一个知识和灵感的分享平台，关于技术、文化、商业等内容，一个自由表达观点的博客，Fly with 5ky.</copyright><lastBuildDate>Thu, 07 Mar 2024 12:56:48 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/categories/%E8%AF%BB%E4%B9%A6%E5%BF%83%E8%AF%AD/" rel="self" type="application/rss+xml" /><item>
     <title>阅读《一本书读懂Web3.0》-a15a</title>
-    <link>http://5ky.top/posts/read-web3-book/</link>
+    <link>http://localhost:1313/posts/read-web3-book/</link>
     <pubDate>Thu, 07 Mar 2024 12:56:48 &#43;0800</pubDate>
     <author>Ty</author>
-    <guid>http://5ky.top/posts/read-web3-book/</guid>
+    <guid>http://localhost:1313/posts/read-web3-book/</guid>
     <description><![CDATA[传统的Web2.0应用是以中心化的服务器为基础架构，并在服务器运行应用程序和处理用户数据。但Web3.0则采用分布式结构，借助于区块链等技术]]></description>
 </item>
 </channel>
