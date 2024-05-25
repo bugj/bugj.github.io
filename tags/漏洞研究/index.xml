@@ -1,14 +1,14 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>漏洞研究 - 标签 - 5ky&#39;s Blog&#39;</title>
-        <link>http://localhost:1313/tags/%E6%BC%8F%E6%B4%9E%E7%A0%94%E7%A9%B6/</link>
-        <description>漏洞研究 - 标签 - 5ky&#39;s Blog&#39;</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><copyright>5ky是一个知识和灵感的分享平台，关于技术、文化、商业等内容，一个自由表达观点的博客，Fly with 5ky.</copyright><lastBuildDate>Sat, 01 Oct 2022 12:56:53 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/tags/%E6%BC%8F%E6%B4%9E%E7%A0%94%E7%A9%B6/" rel="self" type="application/rss+xml" /><item>
+        <title>漏洞研究 - 标签 - 5ky&#39;s Blog</title>
+        <link>http://5ky.top/tags/%E6%BC%8F%E6%B4%9E%E7%A0%94%E7%A9%B6/</link>
+        <description>漏洞研究 - 标签 - 5ky&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><copyright>5ky是一个知识和灵感的分享平台，关于技术、文化、商业等内容，一个自由表达观点的博客，Fly with 5ky.</copyright><lastBuildDate>Sat, 01 Oct 2022 12:56:53 &#43;0800</lastBuildDate><atom:link href="http://5ky.top/tags/%E6%BC%8F%E6%B4%9E%E7%A0%94%E7%A9%B6/" rel="self" type="application/rss+xml" /><item>
     <title> hibernate validate EL表达式注入漏洞</title>
-    <link>http://localhost:1313/posts/hibernate-validate-el-injection/</link>
+    <link>http://5ky.top/posts/hibernate-validate-el-injection/</link>
     <pubDate>Sat, 01 Oct 2022 12:56:53 &#43;0800</pubDate>
     <author>Ty</author>
-    <guid>http://localhost:1313/posts/hibernate-validate-el-injection/</guid>
+    <guid>http://5ky.top/posts/hibernate-validate-el-injection/</guid>
     <description><![CDATA[一、漏洞分析 官方给出的漏洞，版本1：https://mvnrepository.com/artifact/org.hibernate.val]]></description>
 </item>
 </channel>
