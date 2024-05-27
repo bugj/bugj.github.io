@@ -4,6 +4,14 @@
         <link>http://5ky.top/posts/</link>
         <description>所有文章 | 5ky&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><copyright>This is a web security knowledge sharing blog. About reading, movies, living, growing up, Fly with 5ky ～</copyright><lastBuildDate>Tue, 28 May 2024 01:59:48 &#43;0800</lastBuildDate><atom:link href="http://5ky.top/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>SQL注入安全宏观101</title>
+    <link>http://5ky.top/posts/sql-injection-macro/</link>
+    <pubDate>Tue, 28 May 2024 01:59:48 &#43;0800</pubDate>
+    <author>Ty</author>
+    <guid>http://5ky.top/posts/sql-injection-macro/</guid>
+    <description><![CDATA[一、原理 ​ 用户传入的参数使用拼接的方式请求数据库，攻击者通过闭合方式控制数据库查询想要的结果 二、危害 数据泄露 RCE 通过into outfile、d]]></description>
+</item>
+<item>
     <title>  北京(地下城、中央文物管理中心、天安门) 20240526</title>
     <link>http://5ky.top/posts/beijing20240526/</link>
     <pubDate>Sun, 26 May 2024 18:01:03 &#43;0800</pubDate>
