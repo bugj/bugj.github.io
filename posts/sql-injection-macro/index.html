@@ -33,7 +33,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/5ky.top\/posts\/sql-injection-macro\/"
-        },"genre": "posts","keywords": "SQL注入, 漏洞研究","wordcount":  4226 ,
+        },"genre": "posts","keywords": "SQL注入, 漏洞研究","wordcount":  4292 ,
         "url": "http:\/\/5ky.top\/posts\/sql-injection-macro\/","datePublished": "2024-05-28T01:59:48+08:00","dateModified": "2024-05-28T01:59:48+08:00","license": "This is a web security knowledge sharing blog. About reading, movies, living, growing up, Fly with 5ky ～","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
@@ -107,7 +107,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">SQL注入 - 安全宏观101</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Ty</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>网络安全</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2024-05-28">2024-05-28</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;约 4226 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2024-05-28">2024-05-28</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;约 4292 字&nbsp;
                 <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;预计阅读 9 分钟&nbsp;
     
 
@@ -304,10 +304,10 @@
 <li>
 <p>研发在什么情况易写出这类问题</p>
 <ul>
-<li>XFF（X-Forwarded-For）是header请求头中的一个参数是用来识别通过HTTP代理或负载均衡方式连接到Web服务器的客户端最原始的IP地址的HTTP请求头字段。代表了HTTP的请求端真实的IP。服务器端会对XFF信息进行记录，但没有进行过滤处理，就容易导致sql注入的产生</li>
-</ul>
-</li>
-</ul>
+<li>
+<p>XFF（X-Forwarded-For）是header请求头中的一个参数是用来识别通过HTTP代理或负载均衡方式连接到Web服务器的客户端最原始的IP地址的HTTP请求头字段。代表了HTTP的请求端真实的IP。服务器端会对XFF信息进行记录，但没有进行过滤处理，就容易导致sql注入的产生</p>
+<ul>
+<li>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -340,7 +340,26 @@
 </span></span><span class="line"><span class="cl">x-Real-ip
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="五发现方法">五、发现方法</h2>
+</div></li>
+</ul>
+</li>
+<li>
+<p>取数服务（报表平台），允许SQL片段传入</p>
+<ul>
+<li>解决方法：改造，不信任任何参数，抽象好方法，提供给上游</li>
+</ul>
+</li>
+<li>
+<p>字段名、表名，无法预编译</p>
+<ul>
+<li>字段名：Order by（排序）、 GROUP BY（分组计算）、SELECT、 ON、 HAVING（GROUP BY分组结果的条件筛选）</li>
+<li>表名： FROM、 JOIN</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="五发现方法">五、发现方法</h2>
 <ul>
 <li>
 <p>黑盒扫描器</p>
@@ -608,17 +627,6 @@
 <li>构建：白盒扫描</li>
 <li>测试：iast、人工评估</li>
 <li>生产：waf、SQL日志监控binlog</li>
-</ul>
-</li>
-<li>
-<p>举一反三，是否还有同类case</p>
-<ul>
-<li>
-<p>取数服务（报表平台），允许SQL片段传入</p>
-<ul>
-<li>解决方法：改造，不信任任何参数，抽象好方法，提供给上游</li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
