@@ -30,12 +30,20 @@
     <description><![CDATA[一、常用数据库开发体系 1、框架 ORM（Object-Relational Mapping）框架是一种用于将对象模型和关系型数据库之间的数据映射]]></description>
 </item>
 <item>
-    <title>阅读 -《一本书读懂Web3.0》-a15a</title>
+    <title>阅读 -《一本书读懂Web3.0》- a15a</title>
     <link>http://5ky.top/posts/read-web3-book/</link>
     <pubDate>Thu, 07 Mar 2024 12:56:48 &#43;0800</pubDate>
     <author>Ty</author>
     <guid>http://5ky.top/posts/read-web3-book/</guid>
     <description><![CDATA[传统的Web2.0应用是以中心化的服务器为基础架构，并在服务器运行应用程序和处理用户数据。但Web3.0则采用分布式结构，借助于区块链等技术]]></description>
+</item>
+<item>
+    <title>阅读 -《被讨厌的勇气》- 岸见一郎，古贺史健</title>
+    <link>http://5ky.top/posts/read-the-courage-to-be-disliked/</link>
+    <pubDate>Sun, 03 Mar 2024 15:17:35 &#43;0800</pubDate>
+    <author>Ty</author>
+    <guid>http://5ky.top/posts/read-the-courage-to-be-disliked/</guid>
+    <description><![CDATA[心理学三大巨头：荣格、弗洛伊德、阿德勒 真正的自由就是被別人讨厌 ——阿德勒 （不活在别人的评价中，就会被别人讨厌） 一、内容概述 整体来说，这本书到]]></description>
 </item>
 <item>
     <title> hibernate validate EL表达式注入漏洞</title>
