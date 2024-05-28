@@ -11,8 +11,8 @@
   <meta property="og:locale" content="en">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2024-05-28T02:19:12+08:00">
-    <meta property="article:modified_time" content="2024-05-28T02:19:12+08:00">
+    <meta property="article:published_time" content="2024-04-13T15:12:30+08:00">
+    <meta property="article:modified_time" content="2024-04-13T15:12:30+08:00">
     <meta property="article:tag" content="SQL注入">
     <meta property="article:tag" content="漏洞研究">
     <meta property="og:image" content="http://5ky.top/">
@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="SQL注入 - Java栈SQL框架风险">
   <meta name="twitter:description" content="一、常用数据库开发体系 1、框架 ORM（Object-Relational Mapping）框架是一种用于将对象模型和关系型数据库之间的数据映射">
 <meta name="application-name" content="5ky&#39;s Blog">
-<meta name="apple-mobile-web-app-title" content="5ky&#39;s Blog"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/images/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://5ky.top/posts/sql-injection-code/" /><link rel="prev" href="http://5ky.top/posts/sql-injection-macro/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<meta name="apple-mobile-web-app-title" content="5ky&#39;s Blog"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="/images/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://5ky.top/posts/sql-injection-code/" /><link rel="prev" href="http://5ky.top/posts/read-web3-book/" /><link rel="next" href="http://5ky.top/posts/beijing20240526/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
     {
@@ -34,7 +34,7 @@
             "@type": "WebPage",
             "@id": "http:\/\/5ky.top\/posts\/sql-injection-code\/"
         },"genre": "posts","keywords": "SQL注入, 漏洞研究","wordcount":  7455 ,
-        "url": "http:\/\/5ky.top\/posts\/sql-injection-code\/","datePublished": "2024-05-28T02:19:12+08:00","dateModified": "2024-05-28T02:19:12+08:00","license": "This is a web security knowledge sharing blog. About reading, movies, living, growing up, Fly with 5ky ～","publisher": {
+        "url": "http:\/\/5ky.top\/posts\/sql-injection-code\/","datePublished": "2024-04-13T15:12:30+08:00","dateModified": "2024-04-13T15:12:30+08:00","license": "This is a web security knowledge sharing blog. About reading, movies, living, growing up, Fly with 5ky ～","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
                 "@type": "Person",
@@ -107,7 +107,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">SQL注入 - Java栈SQL框架风险</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Ty</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>网络安全</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2024-05-28">2024-05-28</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;约 7455 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2024-04-13">2024-04-13</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;约 7455 字&nbsp;
                 <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;预计阅读 15 分钟&nbsp;
     
 
@@ -2193,7 +2193,7 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2024-05-28</span>
+                <span>更新于 2024-04-13</span>
             </div></div>
         <div class="post-info-line">
             <div class="post-info-md"></div>
@@ -2210,7 +2210,8 @@
         </section>
     </div>
 
-    <div class="post-nav"><a href="/posts/sql-injection-macro/" class="prev" rel="prev" title="SQL注入 - 安全宏观101"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>SQL注入 - 安全宏观101</a></div>
+    <div class="post-nav"><a href="/posts/read-web3-book/" class="prev" rel="prev" title="阅读 -《一本书读懂Web3.0》-a15a"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>阅读 -《一本书读懂Web3.0》-a15a</a>
+            <a href="/posts/beijing20240526/" class="next" rel="next" title="旅游 - 北京（地下城、中央文物管理中心、天安门）20240526">旅游 - 北京（地下城、中央文物管理中心、天安门）20240526<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
 </div>
 <div id="comments"><div id="valine" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
