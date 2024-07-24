@@ -20,6 +20,14 @@
     <description><![CDATA[一、常用数据库开发体系 1、框架 ORM（Object-Relational Mapping）框架是一种用于将对象模型和关系型数据库之间的数据映射]]></description>
 </item>
 <item>
+    <title>python3</title>
+    <link>http://5ky.top/posts/python3/</link>
+    <pubDate>Sun, 24 Mar 2024 19:53:18 &#43;0800</pubDate>
+    <author>Ty</author>
+    <guid>http://5ky.top/posts/python3/</guid>
+    <description><![CDATA[注释 1 2 3 4 5 6 7 8 9 # 注释1 &#39;&#39;&#39; 注释2 &#39;&#39;&#39; &#34;&#34;&#34; 注释3 &#34;&#34;&#34; 多行语句 1 2 3 4 5 6 7 total = item_one + \ item_two + \ item_three # [], {}, 或 () 中的多行语句不用反斜杠 total = [&#39;item_one&#39;, &#39;item_two&#39;, &#39;item_three&#39;, &#39;item_four&#39;, &#39;item_five&#39;] 数值]]></description>
+</item>
+<item>
     <title> hibernate validate EL表达式注入漏洞</title>
     <link>http://5ky.top/posts/hibernate-validate-el-injection/</link>
     <pubDate>Sat, 01 Oct 2022 12:56:53 &#43;0800</pubDate>
