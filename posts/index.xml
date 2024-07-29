@@ -9,7 +9,7 @@
     <pubDate>Wed, 24 Jul 2024 19:53:18 &#43;0800</pubDate>
     <author>Ty</author>
     <guid>http://5ky.top/posts/python3/</guid>
-    <description><![CDATA[注释 1 2 3 4 5 6 7 8 9 # 注释1 &#39;&#39;&#39; 注释2 &#39;&#39;&#39; &#34;&#34;&#34; 注释3 &#34;&#34;&#34; 多行语句 1 2 3 4 5 6 7 total = item_one + \ item_two + \ item_three # [], {}, 或 () 中的多行语句不用反斜杠 total = [&#39;item_one&#39;, &#39;item_two&#39;, &#39;item_three&#39;, &#39;item_four&#39;, &#39;item_five&#39;] 一行]]></description>
+    <description><![CDATA[基础 注释 1 2 3 4 5 6 7 8 9 # 注释1 &#39;&#39;&#39; 注释2 &#39;&#39;&#39; &#34;&#34;&#34; 注释3 &#34;&#34;&#34; 多行语句 1 2 3 4 5 6 7 total = item_one + \ item_two + \ item_three # [], {}, 或 () 中的多行语句不用反斜杠 total = [&#39;item_one&#39;, &#39;item_two&#39;, &#39;item_three&#39;, &#39;item_four&#39;, &#39;item_five&#39;]]]></description>
 </item>
 <item>
     <title>公路车入门手册</title>
