@@ -32,7 +32,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/5ky.top\/posts\/python3\/"
-        },"genre": "posts","keywords": "python3","wordcount":  5073 ,
+        },"genre": "posts","keywords": "python3","wordcount":  6783 ,
         "url": "http:\/\/5ky.top\/posts\/python3\/","datePublished": "2024-07-24T19:53:18+08:00","dateModified": "2024-07-24T19:53:18+08:00","license": "This is a web security knowledge sharing blog. About reading, movies, living, growing up, Fly with 5ky ～","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
@@ -106,8 +106,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">python3</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Ty</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>网络安全</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2024-07-24">2024-07-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;约 5073 字&nbsp;
-                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;预计阅读 11 分钟&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2024-07-24">2024-07-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;约 6783 字&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;预计阅读 14 分钟&nbsp;
     
 
     
@@ -191,7 +191,15 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>数值类型：int (整数)、bool (布尔)、float (浮点数)、complex (复数)</p>
-<p>字符串：单引号、双引号、三引号（连接符号+）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="nb">round</span><span class="p">(</span><span class="mf">5.2</span><span class="p">)</span> <span class="c1"># 四舍五入</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>字符串：单引号、双引号、三引号（连接符号+）</p>
 <p>转义符：\（<strong>r</strong> 原始字符串不发生转义）</p>
 <p>多次执行：&ldquo;123&rdquo; * 3</p>
 <div class="highlight"><div class="chroma">
@@ -368,17 +376,26 @@
 </span><span class="lnt">21
 </span><span class="lnt">22
 </span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="nb">list</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;abcd&#39;</span><span class="p">,</span> <span class="mi">786</span> <span class="p">,</span> <span class="mf">2.23</span><span class="p">,</span> <span class="s1">&#39;runoob&#39;</span><span class="p">,</span> <span class="mf">70.2</span> <span class="p">]</span>  <span class="c1"># 定义一个列表</span>
 </span></span><span class="line"><span class="cl"><span class="n">list2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">123</span><span class="p">,</span> <span class="s1">&#39;runoob&#39;</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl"><span class="nb">list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Baidu&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="nb">list</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># 移除列表中的一个元素并返回元素值 (默认最后一个元素)</span>
-</span></span><span class="line"><span class="cl"><span class="nb">list</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">786</span><span class="p">)</span>  <span class="c1"># 元素出现的次数</span>
-</span></span><span class="line"><span class="cl"><span class="nb">list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">list2</span><span class="p">)</span>  <span class="c1"># 扩展列表</span>
-</span></span><span class="line"><span class="cl"><span class="nb">list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">786</span><span class="p">)</span> <span class="c1"># 从列表中找出某个值第一个匹配项的索引位置</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Baidu&#39;</span><span class="p">)</span> <span class="c1"># 增加元素</span>
 </span></span><span class="line"><span class="cl"><span class="nb">list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&#34;xx&#34;</span><span class="p">)</span> <span class="c1"># 将对象插入列表</span>
+</span></span><span class="line"><span class="cl"><span class="nb">list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">list2</span><span class="p">)</span>  <span class="c1"># 扩展列表</span>
+</span></span><span class="line"><span class="cl"><span class="nb">list</span> <span class="o">+</span> <span class="n">list2</span> <span class="c1"># 打印两个列表拼接在一起的结果</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">786</span><span class="p">)</span> <span class="c1"># 从列表中找出某个值第一个匹配项的索引位置</span>
+</span></span><span class="line"><span class="cl"><span class="nb">list</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">786</span><span class="p">)</span>  <span class="c1"># 元素出现的次数</span>
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="nb">list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&#34;abcd&#34;</span><span class="p">)</span> <span class="c1"># 移除列表中某个值的第一个匹配项</span>
+</span></span><span class="line"><span class="cl"><span class="nb">list</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># 移除列表中的一个元素并返回元素值 (默认最后一个元素)</span>
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="nb">list</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span> <span class="c1"># 反向列表中元素</span>
 </span></span><span class="line"><span class="cl"><span class="nb">list</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span> <span class="c1"># 进行排序</span>
 </span></span><span class="line"><span class="cl"><span class="nb">list</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span> <span class="c1"># 清空列表</span>
@@ -391,7 +408,6 @@
 </span></span><span class="line"><span class="cl"><span class="nb">print</span> <span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>       <span class="c1"># 打印列表第二到第四个元素（不包含第四个元素）</span>
 </span></span><span class="line"><span class="cl"><span class="nb">print</span> <span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>        <span class="c1"># 打印列表从第三个元素开始到末尾</span>
 </span></span><span class="line"><span class="cl"><span class="nb">print</span> <span class="p">(</span><span class="n">list2</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>    <span class="c1"># 打印list2列表两次</span>
-</span></span><span class="line"><span class="cl"><span class="nb">print</span> <span class="p">(</span><span class="nb">list</span> <span class="o">+</span> <span class="n">list2</span><span class="p">)</span>  <span class="c1"># 打印两个列表拼接在一起的结果</span>
 </span></span><span class="line"><span class="cl"><span class="nb">max</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span> <span class="c1">#  返回列表元素最大值/min最小值</span>
 </span></span></code></pre></td></tr></table>
 </div>
@@ -772,28 +788,36 @@
 </span><span class="lnt">26
 </span><span class="lnt">27
 </span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="s2">&#34;xxx&#34;</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="c1"># 首字母大写</span>
-</span></span><span class="line"><span class="cl"><span class="s2">&#34;xxx&#34;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="c1"># 字符串居中</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="s2">&#34;xxx&#34;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="c1"># 字符串居中</span>
 </span></span><span class="line"><span class="cl"><span class="s2">&#34;abccd&#34;</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&#34;c&#34;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># 0到3（不包括3）出现c的次数</span>
 </span></span><span class="line"><span class="cl"><span class="s2">&#34;xxx&#34;</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">,</span> <span class="s1">&#39;strict&#39;</span><span class="p">)</span> <span class="c1"># 解码</span>
 </span></span><span class="line"><span class="cl"><span class="s1">&#39;01234&#39;</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;234&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="c1"># 判断字符串是否以指定后缀结尾</span>
 </span></span><span class="line"><span class="cl"><span class="s1">&#39;01234&#39;</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">)</span> <span class="c1"># 查找字符串所在索引，不包含返回-1。和index一样</span>
-</span></span><span class="line"><span class="cl"><span class="s2">&#34;abc123&#34;</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()</span> <span class="c1"># 符串至少有一个字符，并且所有字符都是字母或数字 返回True</span>
-</span></span><span class="line"><span class="cl"><span class="s2">&#34;abc123&#34;</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()</span> <span class="c1"># 少有一个字符并且所有字符都是字母或中文字则返回 True</span>
-</span></span><span class="line"><span class="cl"><span class="s2">&#34;abc123&#34;</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="c1"># 字符串只包含数字则返回 True </span>
-</span></span><span class="line"><span class="cl"><span class="s2">&#34;abc123&#34;</span><span class="o">.</span><span class="n">islower</span><span class="p">()</span> <span class="c1"># 只要有大写就是false</span>
-</span></span><span class="line"><span class="cl"><span class="s2">&#34;ABC123&#34;</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="c1"># 只要有小写就是false</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;abc123&#34;</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()</span> <span class="c1"># 判断所有字符都是数字或者字母</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;abc123&#34;</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()</span> <span class="c1"># 判断所有字符都是字母</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;abc123&#34;</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="c1"># 判断所有字符都是数字</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;abc123&#34;</span><span class="o">.</span><span class="n">islower</span><span class="p">()</span> <span class="c1"># 判断所有字符都是小写</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;ABC123&#34;</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="c1"># 判断所有字符都是大写</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;ABC123&#34;</span><span class="o">.</span><span class="n">istitle</span><span class="p">()</span> <span class="c1"># 判断所有单词都是首字母大写，像标题</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34; &#34;</span><span class="o">.</span><span class="n">isspace</span><span class="p">()</span> <span class="c1"># 判断所有字符都是空白字符、\t、\n、\r</span>
 </span></span><span class="line"><span class="cl"><span class="s2">&#34;123&#34;</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">()</span> <span class="c1"># 只要有非数字就是false</span>
 </span></span><span class="line"><span class="cl"><span class="s2">&#34; &#34;</span><span class="o">.</span><span class="n">isspace</span><span class="p">()</span> <span class="c1"># 只有空格就是true</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;adfAA&#34;</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="c1"># 把所有字符中的小写字母转换成大写字母</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;adfAA&#34;</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="c1"># 把所有字符中的大写字母转换成小写字母</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;xxx&#34;</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="c1"># 把第一个字母转化为大写字母，其余小写</span>
 </span></span><span class="line"><span class="cl"><span class="s2">&#34;-&#34;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">listx</span><span class="p">)</span> <span class="c1"># 分隔list列表，返回字符串</span>
 </span></span><span class="line"><span class="cl"><span class="s2">&#34;-&#34;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tuplex</span><span class="p">)</span> <span class="c1">#分隔tuple元祖，返回字符串</span>
 </span></span><span class="line"><span class="cl"><span class="s2">&#34;www.baidu.com&#34;</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&#34;.&#34;</span><span class="p">)</span> <span class="c1"># 分隔字符，返回list列表</span>
 </span></span><span class="line"><span class="cl"><span class="s2">&#34;ab c</span><span class="se">\n\n</span><span class="s2">de fg</span><span class="se">\r</span><span class="s2">kl</span><span class="se">\r\n</span><span class="s2">&#34;</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span> <span class="c1"># 换行符分隔(&#39;\r&#39;, &#39;\r\n&#39;, \n&#39;) 返回list</span>
 </span></span><span class="line"><span class="cl"><span class="s2">&#34;123&#34;</span><span class="o">.</span><span class="n">len</span><span class="p">()</span> <span class="c1"># 返回字符串长度</span>
-</span></span><span class="line"><span class="cl"><span class="s2">&#34;adfAA&#34;</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="c1"># 转换字符串为小写</span>
-</span></span><span class="line"><span class="cl"><span class="s2">&#34;adfAA&#34;</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="c1"># 转换字符串中的小写字母为大写</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="s2">&#34;adfAA&#34;</span><span class="o">.</span><span class="n">swapcase</span><span class="p">()</span> <span class="c1"># 大写转小写，小写转大写</span>
 </span></span><span class="line"><span class="cl"><span class="s1">&#39;www.example.com&#39;</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;wx.&#39;</span><span class="p">)</span> <span class="c1"># 从左到右移除字符串的指定字符</span>
 </span></span><span class="line"><span class="cl"><span class="s1">&#39;www.example.com&#39;</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&#34;rip&#34;</span><span class="p">)</span> <span class="c1"># 删除字符串末尾制定字符</span>
@@ -1392,6 +1416,415 @@
 </span></span><span class="line"><span class="cl"><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="c1"># 时间和日期 </span>
 </span></span><span class="line"><span class="cl"><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span> <span class="c1"># 获取当前日期</span>
 </span></span><span class="line"><span class="cl"><span class="n">current_datetime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&#34;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&#34;</span><span class="p">)</span> <span class="c1"># 格式化日期</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>+</code> 代表前面的字符必须出现（1次、多次）</p>
+<p><code>*</code> 代表前面的字符必须出现（0次、1次、多次）</p>
+<p><code>?</code> 代表前面的字符最多出现（0次、1次）</p>
+<p><code>.</code> 除换行符以外的所有字符</p>
+<p><code>^</code> 字符串开头</p>
+<p><code>$</code> 字符串结尾</p>
+<p><code>\d</code> 匹配数字。等价于 <code>[0-9]</code></p>
+<p><code>\D</code> 非数字。等价于 <code>[^0-9]</code></p>
+<p><code>\s</code> 匹配任意空白字符（包括空格、制表符、换行等）。等价于 <code>[ \f\n\r\t\v]</code></p>
+<p><code>\S</code> 非空白字符。等价于 <code>[^ \f\n\r\t\v]</code></p>
+<p><code>\w</code> 匹配数字、字母、下划线。等价于<code>[A-Za-z0-9_]</code></p>
+<p><code>\W</code> 非数字、字母、下划线。等价于 <code>[^A-Za-z0-9_]</code></p>
+<p><code>[]</code> 匹配方括号中所包含的任意一个字符</p>
+<p><code>[abc]</code> 匹配中括号内的任意一个字母</p>
+<p><code>[a-z]</code> 匹配 a-z 中的一个字母</p>
+<p><code>[0-9]</code> 匹配任何数字。类似于 [0123456789]</p>
+<p><code>[a-zA-Z0-9]</code> 匹配任何字母及数字</p>
+<p><code>[^abc]</code> 匹配除了a、b、c 字母以外的所有字符</p>
+<p><code>aa|bb</code> 匹配aa或bb</p>
+<p><code>{n}</code> 前面的字符出现（n次）</p>
+<p><code>{n,}</code> 前面的字符出现（n次、n以上）</p>
+<p><code>{m,n}</code> 前面的字符出现（最少m次、最多n次）</p>
+<p><code>(?=expr)</code> 正向向前查找 expr</p>
+<p><code>(?!expr)</code> 负向向前模式 expr</p>
+<p><code>(?&lt;=expr)</code> 正向向后查找 expr</p>
+<p><code>(?&lt;!expr)</code> 负向向后模式 expr</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">re</span><span class="o">.</span><span class="k">match</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># 只匹配字符串的开始，如果字符串开始不符合正则表达式，则匹配失败，函数返回None</span>
+</span></span><span class="line"><span class="cl"><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># 匹配整个字符串，直到找到一个匹配。</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>函数参数说明：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">参数</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">pattern</td>
+<td style="text-align:left">匹配的正则表达式</td>
+</tr>
+<tr>
+<td style="text-align:left">string</td>
+<td style="text-align:left">要匹配的字符串。</td>
+</tr>
+<tr>
+<td style="text-align:left">flags</td>
+<td style="text-align:left">标志位，用于控制正则表达式的匹配方式，如：是否区分大小写，多行匹配等等。</td>
+</tr>
+</tbody>
+</table>
+<p>flags</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">修饰符</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">re.I</td>
+<td style="text-align:left">使匹配对大小写不敏感</td>
+</tr>
+<tr>
+<td style="text-align:left">re.L</td>
+<td style="text-align:left">做本地化识别（locale-aware）匹配</td>
+</tr>
+<tr>
+<td style="text-align:left">re.M</td>
+<td style="text-align:left">多行匹配，影响 <strong>^</strong> 和 <strong>$</strong>，使它们匹配字符串的每一行的开头和结尾。</td>
+</tr>
+<tr>
+<td style="text-align:left">re.S</td>
+<td style="text-align:left">使 . 匹配包括换行在内的所有字符</td>
+</tr>
+<tr>
+<td style="text-align:left">re.U</td>
+<td style="text-align:left">根据Unicode字符集解析字符。这个标志影响 \w, \W, \b, \B.</td>
+</tr>
+<tr>
+<td style="text-align:left">re.X</td>
+<td style="text-align:left">忽略空格和注释，可以更清晰地组织复杂的正则表达式。</td>
+</tr>
+<tr>
+<td style="text-align:left">re.ASCII</td>
+<td style="text-align:left">使 \w, \W, \b, \B, \d, \D, \s, \S 仅匹配 ASCII 字符。</td>
+</tr>
+</tbody>
+</table>
+<p>匹配成功re.search方法返回一个匹配的对象，否则返回None。</p>
+<p>我们可以使用group(num) 或 groups() 匹配对象函数来获取匹配表达式。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">匹配对象方法</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">group(num=0)</td>
+<td style="text-align:left">匹配的整个表达式的字符串，group() 可以一次输入多个组号，在这种情况下它将返回一个包含那些组所对应值的元组。</td>
+</tr>
+<tr>
+<td style="text-align:left">groups()</td>
+<td style="text-align:left">返回一个包含所有小组字符串的元组，从 1 到 所含的小组号。</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="ch">#!/usr/bin/python</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">re</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="n">line</span> <span class="o">=</span> <span class="s2">&#34;Cats are smarter than dogs&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="n">matchObj</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="k">match</span><span class="p">(</span> <span class="sa">r</span><span class="s1">&#39;dogs&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">M</span><span class="o">|</span><span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="n">matchObj</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">   <span class="nb">print</span> <span class="s2">&#34;match --&gt; matchObj.group() : &#34;</span><span class="p">,</span> <span class="n">matchObj</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">   <span class="nb">print</span> <span class="s2">&#34;No match!!&#34;</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="n">matchObj</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span> <span class="sa">r</span><span class="s1">&#39;dogs&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">M</span><span class="o">|</span><span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="n">matchObj</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">   <span class="nb">print</span> <span class="s2">&#34;search --&gt; searchObj.group() : &#34;</span><span class="p">,</span> <span class="n">matchObj</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">   <span class="nb">print</span> <span class="s2">&#34;No match!!&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">No match!!
+</span></span></span><span class="line"><span class="cl"><span class="s2">search --&gt; searchObj.group() :  dogs
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>re.sub用于替换字符串中的匹配项</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">repl</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>pattern : 正则中的模式字符串。</li>
+<li>repl : 替换的字符串，也可为一个函数。</li>
+<li>string : 要被查找替换的原始字符串。</li>
+<li>count : 模式匹配后替换的最大次数，默认 0 表示替换所有的匹配。</li>
+<li>flags : 编译时用的匹配模式，数字形式。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="ch">#!/usr/bin/python3</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">re</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="n">phone</span> <span class="o">=</span> <span class="s2">&#34;2004-959-559 # 这是一个电话号码&#34;</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="c1"># 删除注释</span>
+</span></span><span class="line"><span class="cl"><span class="n">num</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;#.*$&#39;</span><span class="p">,</span> <span class="s2">&#34;&#34;</span><span class="p">,</span> <span class="n">phone</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span> <span class="p">(</span><span class="s2">&#34;电话号码 : &#34;</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="c1"># 移除非数字的内容</span>
+</span></span><span class="line"><span class="cl"><span class="n">num</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\D&#39;</span><span class="p">,</span> <span class="s2">&#34;&#34;</span><span class="p">,</span> <span class="n">phone</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span> <span class="p">(</span><span class="s2">&#34;电话号码 : &#34;</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">电话号码是:  2004-959-559 
+</span></span></span><span class="line"><span class="cl"><span class="s2">电话号码是 :  2004959559
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 将匹配的数字乘以 2</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">bb</span><span class="p">(</span><span class="n">matched</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">matched</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;aa&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;(?P&lt;aa&gt;\d+)&#39;</span><span class="p">,</span> <span class="n">bb</span><span class="p">,</span> <span class="s1">&#39;A23G4HFD567&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">A46G8HFD1134
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>compile 函数用于编译正则表达式，生成一个正则表达式（ Pattern ）对象，供 match() 和 search() 这两个函数使用。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pattern</span><span class="p">[,</span> <span class="n">flags</span><span class="p">])</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>pattern : 一个字符串形式的正则表达式</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;([a-z]+) ([a-z]+)&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">m</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="k">match</span><span class="p">(</span><span class="s1">&#39;Hello World Wide Web&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>   <span class="c1"># 返回匹配成功的整个子串</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">Hello World
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>findall 在字符串中找到正则表达式所匹配的所有子串，并返回一个列表，如果有多个匹配模式，则返回元组列表，如果没有找到匹配的，则返回空列表。</p>
+<p><strong>注意：</strong> match 和 search 是匹配一次 findall 匹配所有。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">re.findall(pattern, string, flags=0)
+</span></span><span class="line"><span class="cl">或
+</span></span><span class="line"><span class="cl">pattern.findall(string[, pos[, endpos]])
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><strong>pattern</strong> 匹配模式。</li>
+<li><strong>string</strong> 待匹配的字符串。</li>
+<li><strong>pos</strong> 可选参数，指定字符串的起始位置，默认为 0。</li>
+<li><strong>endpos</strong> 可选参数，指定字符串的结束位置，默认为字符串的长度。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">re</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="n">result1</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span><span class="s1">&#39;runoob 123 google 456&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">)</span>   <span class="c1"># 查找数字</span>
+</span></span><span class="line"><span class="cl"><span class="n">result2</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;runoob 123 google 456&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">result3</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;run88oob123google456&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">result1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">result2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">result3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">[&#39;123&#39;, &#39;456&#39;]
+</span></span></span><span class="line"><span class="cl"><span class="s2">[&#39;123&#39;, &#39;456&#39;]
+</span></span></span><span class="line"><span class="cl"><span class="s2">[&#39;88&#39;, &#39;12&#39;]
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 多个匹配模式，返回元组列表：</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">re</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">result</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\w+)=(\d+)&#39;</span><span class="p">,</span> <span class="s1">&#39;set width=20 and height=10&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">[(&#39;width&#39;, &#39;20&#39;), (&#39;height&#39;, &#39;10&#39;)]
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>finditer 和 findall 类似，在字符串中找到正则表达式所匹配的所有子串，并把它们作为一个迭代器返回。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">re.finditer(pattern, string, flags=0)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">re</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"><span class="n">it</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="sa">r</span><span class="s2">&#34;\d+&#34;</span><span class="p">,</span><span class="s2">&#34;12a32bc43jf3&#34;</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="k">match</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span> 
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span> <span class="p">(</span><span class="k">match</span><span class="o">.</span><span class="n">group</span><span class="p">()</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">12 
+</span></span></span><span class="line"><span class="cl"><span class="s2">32 
+</span></span></span><span class="line"><span class="cl"><span class="s2">43 
+</span></span></span><span class="line"><span class="cl"><span class="s2">3
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>split 方法按照能够匹配的子串将字符串分割后返回列表</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">re.split(pattern, string[, maxsplit=0, flags=0])
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>maxsplit	分割次数，maxsplit=1 分割一次，默认为 0，不限制次数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;\W+&#39;</span><span class="p">,</span> <span class="s1">&#39;runoob, runoob, runoob.&#39;</span><span class="p">)</span>  <span class="c1"># 如果找不到匹配的字符串，split 不会对其作出分割</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">[&#39;runoob&#39;, &#39;runoob&#39;, &#39;runoob&#39;, &#39;&#39;]
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div></div><div class="post-footer" id="post-footer">
