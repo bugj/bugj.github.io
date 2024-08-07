@@ -146,8 +146,6 @@
 <ol>
 <li>
 <p>攻击目标网站的内网系统</p>
-</li>
-<li>
 <ol>
 <li>攻击内网应用如redis（gopher或dict协议配合）mysql、zabbix、smtp</li>
 <li>读取文件（file协议）</li>
@@ -156,8 +154,6 @@
 </li>
 <li>
 <p>攻击云环境</p>
-</li>
-<li>
 <ol>
 <li>攻击元数据地址</li>
 <li>攻击Docker Remote API：Docker Remote API是一个取代远程命令行界面（rcli）的REST API，默认开放端口为2375。</li>
@@ -170,8 +166,6 @@
 <ol>
 <li>
 <p>漏洞分为什么类型，有什么区别</p>
-</li>
-<li>
 <ol>
 <li>可回显：响应中返回结果</li>
 <li>无回显：不返回任何信息</li>
@@ -183,8 +177,6 @@
 <ul>
 <li>
 <p>研发在什么情况易写出这类问题</p>
-</li>
-<li>
 <ul>
 <li>C端：url文件上传、OCR服务、docs粘贴外部资源</li>
 <li>B端：自定义（流程编排、工具、回调地址）、大模型</li>
@@ -197,13 +189,9 @@
 <ul>
 <li>
 <p>黑盒规则</p>
-</li>
-<li>
 <ul>
 <li>
 <p>一切传输url的位置都有可能存在</p>
-</li>
-<li>
 <ul>
 <li>爆破参数：share、wap、url、link、src、source、target、u、3g、display、sourceURl、imageURL、domain</li>
 </ul>
@@ -672,16 +660,12 @@
 </div><ul>
 <li>
 <p>灰盒规则</p>
-</li>
-<li>
 <ul>
 <li>hook发送dns请求的方法，在上面进行插桩，如果重放的内网地址进入了插桩的方法，就报漏洞</li>
 </ul>
 </li>
 <li>
 <p>监控规则</p>
-</li>
-<li>
 <ul>
 <li>监控越底层越有效，如果在waf监控会存在大量误报</li>
 <li>如果监控dns解析日志，怎么反查漏洞资产？</li>
@@ -692,8 +676,6 @@
 <ul>
 <li>
 <p>php的网站(使用curl扩展去发起请求，支持的协议较多)</p>
-</li>
-<li>
 <ul>
 <li>
 <p>file协议：读取敏感文件</p>
@@ -703,8 +685,6 @@
 </li>
 <li>
 <p>使用dict、gopher协议</p>
-</li>
-<li>
 <ul>
 <li>gopher协议攻击内网中存在未授权访问漏洞的redis；</li>
 <li>gopher协议攻击内网中存在无密码认证的mysql；</li>
@@ -714,8 +694,6 @@
 </li>
 <li>
 <p>java的网站(从jdk1.7开始移除了对gopher协议的支持，jdk9中移除了协议netdoc，所以Java SSRF的利用方式比较局限)</p>
-</li>
-<li>
 <ul>
 <li>file协议：任意文件读取</li>
 <li>http协议：内网端口扫描，极端情况下也可以使用http协议攻击内网的struts2、thinkphp</li>
@@ -724,21 +702,15 @@
 </li>
 <li>
 <p>http协议的特殊使用场景</p>
-</li>
-<li>
 <ul>
 <li>weblogic和python中的urllib库存在crlf注入漏洞，支持通过“\r\n”的方式来注入换行符，而redis是通过换行符来分隔每条命令，所以使用http协议就可以完成对redis未授权访问的攻击。</li>
 </ul>
 </li>
 <li>
 <p>dns重绑定攻击</p>
-</li>
-<li>
 <ul>
 <li>
 <p>修复ssrf时通常需要发起两次dns解析：</p>
-</li>
-<li>
 <ul>
 <li>第一次：取host的ip，检查是否为内网ip</li>
 <li>第二次：如果不是内网ip，则向host发起请求</li>
@@ -763,24 +735,18 @@
 <ul>
 <li>
 <p>将ip地址进行进制转换</p>
-</li>
-<li>
 <ul>
 <li>十进制，[http://127.0.0.1/%20=%20http://127.0.0.1](http://127.0.0.1/ = http://127.0.0.1)</li>
 </ul>
 </li>
 <li>
 <p>dns解析</p>
-</li>
-<li>
 <ul>
 <li>利用dns解析，在域名上设置A记录，指向127.0.0.1</li>
 </ul>
 </li>
 <li>
 <p>url跳转</p>
-</li>
-<li>
 <ul>
 <li>使用短url地址</li>
 <li>返回包添加location跳转，绕过协议限制</li>
@@ -819,8 +785,6 @@
 </div></li>
 <li>
 <p>规则绕过</p>
-</li>
-<li>
 <ul>
 <li>使用@符，<a href="about:blank" rel="">www.baidu.com@127.0.0.1</a></li>
 </ul>
@@ -830,8 +794,6 @@
 <ul>
 <li>
 <p>怎么查看Java支持哪些协议</p>
-</li>
-<li>
 <ul>
 <li>从sun.net.www.protocol</li>
 <li>Java11支持 file ftp http jar mailto</li>
@@ -839,29 +801,21 @@
 </li>
 <li>
 <p>SSRF如何探测非HTTP协议</p>
-</li>
-<li>
 <ul>
 <li>用dict协议探测</li>
 </ul>
 </li>
 <li>
 <p>限制了只允许使用http协议，怎么绕？</p>
-</li>
-<li>
 <ul>
 <li>302绕过</li>
 </ul>
 </li>
 <li>
 <p>普通ssrf不能攻击redis，攻击redis的途径</p>
-</li>
-<li>
 <ul>
 <li>
 <p>SSRF遇到CRLF，可以实现换行，对redis的攻击</p>
-</li>
-<li>
 <ul>
 <li>weblogic自己实现了一套socket方法，将用户传入的url直接带入到socket接口，并且没有检查url中的crlf</li>
 </ul>
