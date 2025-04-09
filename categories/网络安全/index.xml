@@ -9,7 +9,7 @@
     <pubDate>Wed, 09 Apr 2025 20:42:21 &#43;0800</pubDate>
     <author>Ty</author>
     <guid>http://5ky.top/posts/deserialization/</guid>
-    <description><![CDATA[一、原理]]></description>
+    <description><![CDATA[一、原理 序列化：对象转成字符串 java.io.ObjectOutputStream writeObject（用来将一个对象写入输出流中） 反序列化：字符串转对象 java.io.ObjectInputStream readObject（恢复） gadgets 类]]></description>
 </item>
 <item>
     <title>SSRF服务端请求伪造 - 安全宏观101</title>
